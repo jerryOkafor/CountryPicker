@@ -84,10 +84,10 @@ class CountryPickerAdapter extends RecyclerView.Adapter<CountryPickerAdapter.Cou
                 if (charString.isEmpty()) {
                     filteredCountries = countries;
                 } else {
+                    // TODO: 12/15/17 If the Country code is hidden, serach with only country name
                     ArrayList<Country> filteredList = new ArrayList<>();
                     for (Country country : countries) {
-                        if (country.getCode().startsWith(charString) || country.getName().startsWith(charString)
-                                || country.getCode().toLowerCase().startsWith(charString)
+                        if (country.getCode().toLowerCase().startsWith(charString)
                                 || country.getName().toLowerCase().startsWith(charString)) {
                             filteredList.add(country);
                         }

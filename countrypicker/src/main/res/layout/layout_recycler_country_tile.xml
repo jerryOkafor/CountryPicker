@@ -16,9 +16,10 @@
 
         <ImageView
             android:id="@+id/ivFlag"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="32dp"
+            android:layout_height="21dp"
             android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
             android:src="@drawable/in" />
     </LinearLayout>
 
@@ -33,7 +34,8 @@
         android:layout_toStartOf="@+id/tvCode"
         android:gravity="center_vertical"
         android:text="India (IN)"
-        android:textColor="@android:color/secondary_text_light" />
+        android:textColor="@android:color/secondary_text_light"
+        android:textSize="16sp" />
 
     <TextView
         android:id="@+id/tvCode"
@@ -51,7 +53,8 @@
         android:paddingStart="10dp"
         android:text="@string/sample_code"
         android:textColor="@android:color/secondary_text_light"
-        android:textDirection="ltr" />
+        android:textDirection="ltr"
+        android:textSize="16sp" />
 
     <View
         android:id="@+id/preferenceDivider"

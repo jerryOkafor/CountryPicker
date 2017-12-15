@@ -17,7 +17,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
         app:cp_showFastScroll="false"
-        app:cp_showFullScreeDialog="true"
+        app:cp_showFullScreeDialog="false"
         app:fastScrollerBubbleColor="@color/colorPrimary"
         app:fastScrollerBubbleTextAppearance="@style/TextAppearance.AppCompat.Medium"
         app:fastScrollerHandleColor="@color/colorAccent"
