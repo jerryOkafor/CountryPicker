@@ -1,6 +1,5 @@
 package me.jerryhanks.countrypicker;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
@@ -9,13 +8,20 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.support.design.widget.TextInputEditText;
+import android.telephony.PhoneNumberUtils;
+import android.text.Editable;
 import android.text.InputType;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  * @author Jerry Hanks on 12/14/17.
@@ -23,10 +29,15 @@ import android.widget.Toast;
 
 public class CountryPicker extends TextInputEditText {
     private final static int EXTRA_TAPPABLE_AREA = 50;
-    private BitmapDrawable chip;
     private boolean isRTL;
     private boolean searchAllowed = true;
     private boolean dialogKeyboardAutoPopup = true;
+    private boolean showFastScroller = true;
+    private int fastScrollerBubbleColor = 0;
+    private int fastScrollerHandleColor = 0;
+    private int fastScrollerBubbleTextAppearance = 0;
+    private Country selectedCountry = new Country("Nigeria", "+234", "NG");
+    private BitmapDrawable chip;
 
     public CountryPicker(Context context) {
         this(context, null);
@@ -56,18 +67,42 @@ public class CountryPicker extends TextInputEditText {
         isRTL = isRTLLanguage();
         setInputType(InputType.TYPE_CLASS_NUMBER);
 
-        chip = createClusterBitmap("+234");
+        invalidCountryCode(selectedCountry);
+    }
+
+    private void invalidCountryCode(Country country) {
+        CharSequence dialCode;
+        CharSequence code;
+        int drawableId;
+        if (country == null) {
+            dialCode = "+123";
+            code = "NG";
+            drawableId = R.drawable.ng;
+        } else {
+            dialCode = country.getDialCode();
+            code = country.getCode();
+            drawableId = Country.getFlagResID(country);
+        }
+
+        chip = createClusterBitmap(dialCode, code, drawableId);
         setCompoundDrawablesWithIntrinsicBounds(chip, null, null, null);
         setCompoundDrawablePadding(10);
+
     }
 
 
-    private BitmapDrawable createClusterBitmap(CharSequence code) {
+    private BitmapDrawable createClusterBitmap(CharSequence dialCode, CharSequence code, int drawableId) {
         View wrapper = LayoutInflater.from(getContext()).inflate(R.layout.picker_view,
                 null);
 
-        TextView clusterSizeText = wrapper.findViewById(R.id.tvShortCode);
-        clusterSizeText.setText(code);
+        TextView tvCode = wrapper.findViewById(R.id.tvShortCode);
+        tvCode.setTypeface(getTypeface());
+        tvCode.setTextSize(getTextSize());
+        tvCode.setTextColor(getTextColors());
+        tvCode.setText(getContext().getString(R.string.fmt_code_and_dial_code, code, dialCode));
+
+        ImageView ivFlag = wrapper.findViewById(R.id.ivFlag);
+        ivFlag.setImageResource(drawableId);
 
         wrapper.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
                 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
@@ -86,18 +121,19 @@ public class CountryPicker extends TextInputEditText {
     public boolean onTouchEvent(MotionEvent event) {
         final Rect bounds = chip.getBounds();
         final int x = (int) event.getX();
-        int iconXRect = isRTL ? getLeft() + bounds.width() + EXTRA_TAPPABLE_AREA :
-                getRight() - bounds.width() - EXTRA_TAPPABLE_AREA;
+        final int y = (int) event.getY();
+        Log.d("TAG", "x:" + x + " y " + y);
+        Log.d("BOUND TAG", "b X:" + bounds.centerX() + " b y " + bounds.centerY());
+        int iconXRect = isRTL ? getRight() - bounds.width() - EXTRA_TAPPABLE_AREA :
+                getLeft() + bounds.width() + EXTRA_TAPPABLE_AREA;
 
         switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                Toast.makeText(getContext(), "CLicked:DOWN", Toast.LENGTH_LONG).show();
-                launchCountrySelectionDialog();
-                break;
-//            case MotionEvent.ACTION_UP:
-//                Toast.makeText(getContext(), "CLicked:UP", Toast.LENGTH_LONG).show();
-//                launchCountrySelectionDialog();
-//                break;
+            case MotionEvent.ACTION_UP: {
+                if (isRTL ? x >= iconXRect : x <= iconXRect) {
+                    launchCountrySelectionDialog();
+                }
+            }
+            break;
 
         }
         return super.onTouchEvent(event);
@@ -122,6 +158,54 @@ public class CountryPicker extends TextInputEditText {
     public boolean isDialogKeyboardAutoPopup() {
         return dialogKeyboardAutoPopup;
     }
+
+    public boolean isShowFastScroller() {
+        return showFastScroller;
+    }
+
+    public int getFastScrollerBubbleColor() {
+        return fastScrollerBubbleColor;
+    }
+
+    public int getFastScrollerHandleColor() {
+        return fastScrollerHandleColor;
+    }
+
+    public int getFastScrollerBubbleTextAppearance() {
+        return fastScrollerBubbleTextAppearance;
+    }
+
+    public void updateCountry(Country country) {
+        this.selectedCountry = country;
+        invalidCountryCode(this.selectedCountry);
+
+    }
+
+    public String getFullNumber() {
+        return getFullNumberWithPlus().replace("+", " ");
+    }
+
+    public String getFullNumberWithPlus() {
+        return this.selectedCountry.getDialCode() + getText().toString();
+    }
+
+    public String getFormattedFullNumber() {
+        String formattedFullNumber;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            formattedFullNumber = PhoneNumberUtils.formatNumber(getFullNumberWithPlus(), getSelectedCountryCode());
+        } else {
+            formattedFullNumber = PhoneNumberUtils.formatNumber(getFullNumberWithPlus());
+        }
+
+        return formattedFullNumber;
+    }
+
+    private String getSelectedCountryCode() {
+        if (this.selectedCountry == null)
+            return "";
+        return this.selectedCountry.getCode();
+    }
+
 
     public enum Language {
         ENGLISH("en");

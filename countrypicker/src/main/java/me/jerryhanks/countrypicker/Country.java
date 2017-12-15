@@ -30,10 +30,10 @@ public class Country implements Comparable<Country> {
     static String dialogTitle, searchHintMessage, noResultFoundAckMessage;
     List<Country> countryList;
 
-    public Country(String name, String phoneCode, String englishName) {
-        this.dialCode = phoneCode;
+    public Country(String name, String dialCode, String code) {
+        this.dialCode = dialCode;
         this.name = name;
-        this.code = englishName;
+        this.code = code;
         flagResID = R.drawable.flag_transparent;
     }
 

@@ -6,4 +6,5 @@
     <string name="sample_code">+91</string>
     <string name="format_country">%s ( %s )</string>
     <string name="plus_prefix">%s</string>
+    <string name="fmt_code_and_dial_code">(%s) %s</string>
 </resources>

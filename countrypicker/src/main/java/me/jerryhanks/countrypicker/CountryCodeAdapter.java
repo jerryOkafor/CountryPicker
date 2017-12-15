@@ -2,8 +2,8 @@ package me.jerryhanks.countrypicker;
 
 import android.app.Dialog;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,11 +23,13 @@ import java.util.List;
 class CountryCodeAdapter extends RecyclerView.Adapter<CountryCodeAdapter.CountryCodeViewHolder> {
     private final Context context;
     private final List<Country> countries;
+    private final OnItemClickCallback clickListener;
 
-    public CountryCodeAdapter(Context context, List<Country> countries, RelativeLayout rlQueryHolder,
-                              EditText editText_search, TextView textView_noResult, Dialog dialog,
-                              ImageView imgClearQuery) {
+    public CountryCodeAdapter(Context context, @NonNull OnItemClickCallback callback, List<Country> countries,
+                              RelativeLayout rlQueryHolder, EditText editText_search,
+                              TextView textView_noResult, Dialog dialog, ImageView imgClearQuery) {
         this.context = context;
+        this.clickListener = callback;
         this.countries = countries;
 
     }
@@ -40,8 +42,9 @@ class CountryCodeAdapter extends RecyclerView.Adapter<CountryCodeAdapter.Country
 
     @Override
     public void onBindViewHolder(CountryCodeViewHolder holder, int position) {
-        holder.setCountry(countries.get(position));
-        holder.itemView.setOnClickListener(v -> Toast.makeText(context, "Item clicked: @: " + position, Toast.LENGTH_LONG).show());
+        Country country = countries.get(position);
+        holder.setCountry(country);
+        holder.itemView.setOnClickListener(v -> clickListener.onItemClick(country));
 
     }
 
@@ -57,7 +60,7 @@ class CountryCodeAdapter extends RecyclerView.Adapter<CountryCodeAdapter.Country
         LinearLayout flagWrapper;
         View divider;
 
-        public CountryCodeViewHolder(View itemView) {
+        CountryCodeViewHolder(View itemView) {
             super(itemView);
             rootView = (RelativeLayout) itemView;
             tvName = rootView.findViewById(R.id.tvName);
@@ -90,7 +93,7 @@ class CountryCodeAdapter extends RecyclerView.Adapter<CountryCodeAdapter.Country
         public void setCountry(Country country) {
 
             if (country != null) {
-                divider.setVisibility(View.GONE);
+//                divider.setVisibility(View.GONE);
                 tvName.setVisibility(View.VISIBLE);
                 tvCode.setVisibility(View.VISIBLE);
 
@@ -116,5 +119,9 @@ class CountryCodeAdapter extends RecyclerView.Adapter<CountryCodeAdapter.Country
         public RelativeLayout getMainView() {
             return rootView;
         }
+    }
+
+    interface OnItemClickCallback {
+        void onItemClick(Country country);
     }
 }

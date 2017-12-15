@@ -1,19 +1,23 @@
 package me.jerryhanks.countrypicker;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.futuremind.recyclerviewfastscroll.FastScroller;
 import com.google.gson.FieldNamingPolicy;
-import com.google.gson.FieldNamingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -28,9 +32,11 @@ import java.util.List;
  */
 
 public class CountryCodePickerDialog {
+    private static Dialog INSTANCE = null;
+
     public static void openPickerDialog(final CountryPicker picker) {
         final Context context = picker.getContext();
-        final Dialog dialog = new Dialog(context);
+        Dialog dialog = getDialog(context);
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         if (dialog.getWindow() != null)
@@ -56,15 +62,55 @@ public class CountryCodePickerDialog {
         final EditText editText_search = dialog.findViewById(R.id.editText_search);
         TextView textView_noResult = dialog.findViewById(R.id.textView_noresult);
         RelativeLayout rlHolder = dialog.findViewById(R.id.rl_holder);
-        ImageView imgDismiss = dialog.findViewById(R.id.img_dismiss);
+        ImageView imgDismiss = dialog.findViewById(R.id.ivDismiss);
 
-        final CountryCodeAdapter cca = new CountryCodeAdapter(context, countries, rlQueryHolder, editText_search, textView_noResult, dialog, imgClearQuery);
+
+        //set click listeners
+        imgDismiss.setOnClickListener(v -> dialog.dismiss());
+
+        final CountryCodeAdapter.OnItemClickCallback callback = country -> {
+            picker.updateCountry(country);
+            dialog.dismiss();
+        };
+
+        final CountryCodeAdapter cca = new CountryCodeAdapter(context, callback, countries, rlQueryHolder, editText_search, textView_noResult, dialog, imgClearQuery);
         recyclerView_countryDialog.setLayoutManager(new LinearLayoutManager(context));
         recyclerView_countryDialog.setAdapter(cca);
+
+        //fast scroller
+        FastScroller fastScroller = dialog.findViewById(R.id.fastScroll);
+        fastScroller.setRecyclerView(recyclerView_countryDialog);
+        if (picker.isShowFastScroller()) {
+            if (picker.getFastScrollerBubbleColor() != 0) {
+                fastScroller.setBubbleColor(picker.getFastScrollerBubbleColor());
+            }
+
+            if (picker.getFastScrollerHandleColor() != 0) {
+                fastScroller.setHandleColor(picker.getFastScrollerHandleColor());
+            }
+
+            if (picker.getFastScrollerBubbleTextAppearance() != 0) {
+                try {
+                    fastScroller.setBubbleTextAppearance(picker.getFastScrollerBubbleTextAppearance());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        } else {
+            fastScroller.setVisibility(View.GONE);
+        }
 
 
         dialog.show();
 
+    }
+
+    private static Dialog getDialog(@Nullable Context context) {
+        if (INSTANCE == null && context != null) {
+            return new Dialog(context);
+        }
+        return INSTANCE;
     }
 
     private static List<Country> loadDataFromJson(Context context) {
@@ -101,5 +147,20 @@ public class CountryCodePickerDialog {
         }
         return outputStream.toString();
     }
+
+    private static void hideKeyboard(Context context) {
+        if (context instanceof Activity) {
+            Activity activity = (Activity) context;
+            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
+            //Find the currently focused view, so we can grab the correct window token from it.
+            View view = activity.getCurrentFocus();
+            //If no view currently has focus, create a new one, just so we can grab a window token from it
+            if (view == null) {
+                view = new View(activity);
+            }
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
 
 }
