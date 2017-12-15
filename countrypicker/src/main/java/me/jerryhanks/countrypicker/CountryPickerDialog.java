@@ -62,12 +62,12 @@ public class CountryPickerDialog {
         //set click listeners
         imgDismiss.setOnClickListener(v -> dialog.dismiss());
 
-        final CountryAdapter.OnItemClickCallback callback = country -> {
+        final CountryPickerAdapter.OnItemClickCallback callback = country -> {
             picker.updateCountry(country);
             dialog.dismiss();
         };
 
-        final CountryAdapter cca = new CountryAdapter(context, callback, countries, rlQueryHolder, searchView, tvNoResult);
+        final CountryPickerAdapter cca = new CountryPickerAdapter(context, callback, countries, rlQueryHolder, searchView, tvNoResult);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(cca);
 

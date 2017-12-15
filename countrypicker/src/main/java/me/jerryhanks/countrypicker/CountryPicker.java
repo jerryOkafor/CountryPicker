@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.telephony.PhoneNumberUtils;
@@ -34,6 +35,10 @@ public class CountryPicker extends TextInputEditText {
     private static final String TAG = CountryPicker.class.getSimpleName();
     public static final int PICKER_REQUEST_CODE = 101;
     public static final String EXTRA_COUNTRY = "me.jerryhanks.countrypicker_EXTRA_COUNTRY";
+    public static final String EXTRA_SHOW_FAST_SCROLL = "me.jerryhanks.countrypicker_EXTRA_SHOW_FAST_SCROLL";
+    public static final String EXTRA_SHOW_FAST_SCROLL_BUBBLE_COLOR = "me.jerryhanks.countrypicker_EXTRA_SHOW_FAST_BUBBLE_COLOR";
+    public static final String EXTRA_SHOW_FAST_SCROLL_HANDLER_COLOR = "me.jerryhanks.countrypicker_EXTRA_SHOW_FAST_HANDLE_COLOR";
+    public static final String EXTRA_SHOW_FAST_SCROLL_BUBBLE_TEXT_APPEARANCE = "me.jerryhanks.countrypicker_EXTRA_SHOW_FAST_BUBBLE_TEXT_APPEARANCE";
     private boolean isRTL;
     private boolean searchAllowed;
     private boolean dialogKeyboardAutoPopup;
@@ -116,11 +121,6 @@ public class CountryPicker extends TextInputEditText {
 
         invalidCountryCode(selectedCountry);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            addTextChangedListener(new PhoneNumberFormattingTextWatcher(selectedCountry.getCode()));
-        } else {
-            addTextChangedListener(new PhoneNumberFormattingTextWatcher());
-        }
     }
 
     private void startAutoCountryDetection(boolean loadDefaultWhenFails) {
@@ -490,6 +490,11 @@ public class CountryPicker extends TextInputEditText {
         if (showFullscreenDialog) {
             try {
                 Intent intent = new Intent(getContext(), CountryPickerActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putBoolean(EXTRA_SHOW_FAST_SCROLL, showFastScroller);
+                bundle.putInt(EXTRA_SHOW_FAST_SCROLL_BUBBLE_COLOR, fastScrollerBubbleColor);
+                bundle.putInt(EXTRA_SHOW_FAST_SCROLL_HANDLER_COLOR, fastScrollerHandleColor);
+                bundle.putInt(EXTRA_SHOW_FAST_SCROLL_BUBBLE_TEXT_APPEARANCE, fastScrollerBubbleTextAppearance);
                 ((Activity) getContext()).startActivityForResult(intent, PICKER_REQUEST_CODE);
             } catch (ClassCastException e) {
                 e.printStackTrace();

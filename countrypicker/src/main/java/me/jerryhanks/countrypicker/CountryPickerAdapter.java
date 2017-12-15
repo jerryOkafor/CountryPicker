@@ -14,6 +14,8 @@ import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
+import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,15 +23,16 @@ import java.util.List;
  * @author Jerry Hanks on 12/14/17.
  */
 
-class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryCodeViewHolder> implements Filterable {
+class CountryPickerAdapter extends RecyclerView.Adapter<CountryPickerAdapter.CountryCodeViewHolder>
+        implements Filterable, SectionTitleProvider {
     private final Context context;
     private final List<Country> countries;
     private final TextView tvNoResult;
     private List<Country> filteredCountries;
     private final OnItemClickCallback clickListener;
 
-    public CountryAdapter(Context context, @NonNull OnItemClickCallback callback, List<Country> countries,
-                          RelativeLayout rlQueryHolder, SearchView searchView, TextView tvNoResult) {
+    public CountryPickerAdapter(Context context, @NonNull OnItemClickCallback callback, List<Country> countries,
+                                RelativeLayout rlQueryHolder, SearchView searchView, TextView tvNoResult) {
         this.context = context;
         this.clickListener = callback;
         this.countries = countries;
@@ -110,6 +113,23 @@ class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryCodeView
                 }
             }
         };
+    }
+
+    @Override
+    public String getSectionTitle(int position) {
+        Country country = getItem(position);
+//        if (preferredCountriesCount > position) {
+//            return "★";
+//        } else
+        if (country != null) {
+            return country.getName().substring(0, 1);
+        } else {
+            return "☺"; //this should never be the case
+        }
+    }
+
+    private Country getItem(int position) {
+        return filteredCountries.get(position);
     }
 
     class CountryCodeViewHolder extends RecyclerView.ViewHolder {

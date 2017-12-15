@@ -69,7 +69,10 @@
         android:layout_alignEnd="@+id/recycler_countryDialog"
         android:layout_alignRight="@+id/recycler_countryDialog"
         android:layout_alignTop="@+id/recycler_countryDialog"
-        android:orientation="vertical" />
+        android:orientation="vertical"
+        app:fastscroll__bubbleColor="#5e64ce"
+        app:fastscroll__bubbleTextAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:fastscroll__handleColor="#8f93d1" />
 
     <TextView
         android:id="@+id/textView_noresult"

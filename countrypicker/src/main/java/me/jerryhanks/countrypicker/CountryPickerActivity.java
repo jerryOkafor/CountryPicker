@@ -18,12 +18,25 @@ import java.util.List;
 
 public class CountryPickerActivity extends AppCompatActivity {
 
-    private boolean showFastScroller = false;
+    private boolean showFastScroller = true;
+    private int fastScrollerBubbleColor = 0;
+    private int fastScrollerHandleColor = 0;
+    private int fastScrollerBubbleTextAppearance = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_country_picker);
+
+        if (getIntent() != null) {
+            Bundle bundle = getIntent().getExtras();
+            if (bundle != null) {
+                showFastScroller = bundle.getBoolean(CountryPicker.EXTRA_SHOW_FAST_SCROLL);
+                fastScrollerBubbleColor = bundle.getInt(CountryPicker.EXTRA_SHOW_FAST_SCROLL_BUBBLE_COLOR);
+                fastScrollerHandleColor = bundle.getInt(CountryPicker.EXTRA_SHOW_FAST_SCROLL_HANDLER_COLOR);
+                fastScrollerBubbleTextAppearance = bundle.getInt(CountryPicker.EXTRA_SHOW_FAST_SCROLL_BUBBLE_TEXT_APPEARANCE);
+            }
+        }
 
 
         //list all the countries
@@ -42,7 +55,7 @@ public class CountryPickerActivity extends AppCompatActivity {
 
         imgDismiss.setVisibility(View.INVISIBLE);
 
-        final CountryAdapter.OnItemClickCallback callback = country -> {
+        final CountryPickerAdapter.OnItemClickCallback callback = country -> {
             //set result and finish
             Intent intent = new Intent();
             intent.putExtra(CountryPicker.EXTRA_COUNTRY, country);
@@ -50,7 +63,7 @@ public class CountryPickerActivity extends AppCompatActivity {
             finish();
         };
 
-        final CountryAdapter cca = new CountryAdapter(this, callback, countries, rlQueryHolder, searchView, tvNoResult);
+        final CountryPickerAdapter cca = new CountryPickerAdapter(this, callback, countries, rlQueryHolder, searchView, tvNoResult);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(cca);
 
@@ -58,21 +71,21 @@ public class CountryPickerActivity extends AppCompatActivity {
         FastScroller fastScroller = findViewById(R.id.fastScroll);
         fastScroller.setRecyclerView(recyclerView);
         if (isShowFastScroller()) {
-//            if (picker.getFastScrollerBubbleColor() != 0) {
-//                fastScroller.setBubbleColor(picker.getFastScrollerBubbleColor());
-//            }
-//
-//            if (picker.getFastScrollerHandleColor() != 0) {
-//                fastScroller.setHandleColor(picker.getFastScrollerHandleColor());
-//            }
-//
-//            if (picker.getFastScrollerBubbleTextAppearance() != 0) {
-//                try {
-//                    fastScroller.setBubbleTextAppearance(picker.getFastScrollerBubbleTextAppearance());
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
+            if (getFastScrollerBubbleColor() != 0) {
+                fastScroller.setBubbleColor(getFastScrollerBubbleColor());
+            }
+
+            if (getFastScrollerHandleColor() != 0) {
+                fastScroller.setHandleColor(getFastScrollerHandleColor());
+            }
+
+            if (getFastScrollerBubbleTextAppearance() != 0) {
+                try {
+                    fastScroller.setBubbleTextAppearance(getFastScrollerBubbleTextAppearance());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 
         } else {
             fastScroller.setVisibility(View.GONE);
@@ -86,5 +99,17 @@ public class CountryPickerActivity extends AppCompatActivity {
 
     public void setShowFastScroller(boolean showFastScroller) {
         this.showFastScroller = showFastScroller;
+    }
+
+    public int getFastScrollerBubbleColor() {
+        return fastScrollerBubbleColor;
+    }
+
+    public int getFastScrollerHandleColor() {
+        return fastScrollerHandleColor;
+    }
+
+    public int getFastScrollerBubbleTextAppearance() {
+        return fastScrollerBubbleTextAppearance;
     }
 }
