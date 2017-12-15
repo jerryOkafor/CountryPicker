@@ -1,8 +1,8 @@
 package me.jerryhanks.countrypicker;
 
+import android.content.Context;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.gson.annotations.SerializedName;
 

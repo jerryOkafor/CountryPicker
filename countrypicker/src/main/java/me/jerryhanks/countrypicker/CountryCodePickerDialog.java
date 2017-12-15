@@ -6,7 +6,6 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -113,7 +112,7 @@ public class CountryCodePickerDialog {
         return INSTANCE;
     }
 
-    private static List<Country> loadDataFromJson(Context context) {
+    public static List<Country> loadDataFromJson(Context context) {
 
         InputStream inputStream = context.getResources().openRawResource(R.raw.country_codes);
         String jsonString = readJsonFile(inputStream);
@@ -125,9 +124,6 @@ public class CountryCodePickerDialog {
 
         Country[] countries = gson.fromJson(jsonString, Country[].class);
         List<Country> countryList = Arrays.asList(countries);
-        for (Country country : countryList) {
-            Log.d("TAG", country.toString());
-        }
         return countryList;
     }
 

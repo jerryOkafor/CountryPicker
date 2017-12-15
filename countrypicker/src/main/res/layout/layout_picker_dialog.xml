@@ -72,6 +72,7 @@
             app:srcCompat="@drawable/ic_backspace_black_24dp" />
 
         <SearchView
+            android:id="@+id/vSearch"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
