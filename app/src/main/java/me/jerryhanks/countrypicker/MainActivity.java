@@ -1,5 +1,7 @@
 package me.jerryhanks.countrypicker;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,6 +15,7 @@ import android.widget.Button;
 public class MainActivity extends AppCompatActivity {
 
     private String TAG = MainActivity.class.getSimpleName();
+    private CountryPicker picker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,7 +27,7 @@ public class MainActivity extends AppCompatActivity {
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                 .setAction("Action", null).show());
-        CountryPicker picker = findViewById(R.id.countryPicker);
+        picker = findViewById(R.id.countryPicker);
         Button button = findViewById(R.id.button);
         button.setOnClickListener(v -> {
             String fullNumber = picker.getFullNumber();
@@ -56,4 +59,23 @@ public class MainActivity extends AppCompatActivity {
 
         return super.onOptionsItemSelected(item);
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CountryPicker.PICKER_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK)
+                picker.handleActivityResult(data);
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+    }
 }
+
+

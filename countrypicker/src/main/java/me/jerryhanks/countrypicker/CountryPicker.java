@@ -1,6 +1,8 @@
 package me.jerryhanks.countrypicker;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -22,7 +24,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author Jerry Hanks on 12/14/17.
@@ -31,19 +32,22 @@ import java.util.Objects;
 public class CountryPicker extends TextInputEditText {
     private final static int EXTRA_TAPPABLE_AREA = 5;
     private static final String TAG = CountryPicker.class.getSimpleName();
+    public static final int PICKER_REQUEST_CODE = 101;
+    public static final String EXTRA_COUNTRY = "me.jerryhanks.countrypicker_EXTRA_COUNTRY";
     private boolean isRTL;
-    private boolean searchAllowed = true;
-    private boolean dialogKeyboardAutoPopup = true;
-    private boolean showFastScroller = true;
-    private int fastScrollerBubbleColor = 0;
-    private int fastScrollerHandleColor = 0;
-    private int fastScrollerBubbleTextAppearance = 0;
+    private boolean searchAllowed;
+    private boolean dialogKeyboardAutoPopup;
+    private boolean showFastScroller;
+    private int fastScrollerBubbleColor;
+    private int fastScrollerHandleColor;
+    private int fastScrollerBubbleTextAppearance;
     private Country selectedCountry = new Country("Nigeria", "+234", "NG");
     private BitmapDrawable chip;
     private String defaultCountryName;
     private boolean autoDetectCountryEnabled = true;
     private Language languageToApply = Language.ENGLISH;
     private AutoDetectionPref selectedAutoDetectionPref;
+    private boolean showFullscreenDialog;
 
     public CountryPicker(Context context) {
         this(context, null);
@@ -68,6 +72,25 @@ public class CountryPicker extends TextInputEditText {
                 //default Country
                 defaultCountryName = a.getString(R.styleable.CountryPicker_cp_defaultCountryName);
 
+                //show fullscreen Dialog
+                showFullscreenDialog = a.getBoolean(R.styleable.CountryPicker_cp_showFullScreeDialog, true);
+
+                //show fast scroller
+                showFastScroller = a.getBoolean(R.styleable.CountryPicker_cp_showFastScroll, true);
+
+                //bubble color
+                fastScrollerBubbleColor = a.getColor(R.styleable.CountryPicker_fastScrollerBubbleColor, 0);
+
+                //scroller handle color
+                fastScrollerHandleColor = a.getColor(R.styleable.CountryPicker_fastScrollerHandleColor, 0);
+
+                //scroller text appearance
+                fastScrollerBubbleTextAppearance = a.getResourceId(R.styleable.CountryPicker_fastScrollerBubbleTextAppearance, 0);
+
+
+                searchAllowed = a.getBoolean(R.styleable.CountryPicker_cp_searchAllowed, true);
+
+                dialogKeyboardAutoPopup = a.getBoolean(R.styleable.CountryPicker_cp_dialogKeyboardAutoPopup, true);
 
                 //country auto detection pref
                 int autoDetectionPrefValue = a.getInt(R.styleable.CountryPicker_cp_countryAutoDetectionPref, 123);
@@ -75,7 +98,7 @@ public class CountryPicker extends TextInputEditText {
 
 
                 //auto detect country
-                autoDetectCountryEnabled = a.getBoolean(R.styleable.CountryPicker_ccp_autoDetectCountry, true);
+                autoDetectCountryEnabled = a.getBoolean(R.styleable.CountryPicker_cp_autoDetectCountry, true);
 
             } finally {
                 a.recycle();
@@ -154,7 +177,7 @@ public class CountryPicker extends TextInputEditText {
         } else {
             dialCode = country.getDialCode();
             code = country.getCode();
-            drawableId = Country.getFlagResID(country);
+            drawableId = Util.getFlagResID(country);
         }
 
         chip = createClusterBitmap(dialCode, code, drawableId);
@@ -388,7 +411,7 @@ public class CountryPicker extends TextInputEditText {
     }
 
     private Country getCountryForName(Language languageToApply, String simCountryISO) {
-        List<Country> countries = CountryCodePickerDialog.loadDataFromJson(getContext());
+        List<Country> countries = Util.loadDataFromJson(getContext());
         for (Country country : countries) {
             if (simCountryISO.equals(country.getCode()))
                 return country;
@@ -410,6 +433,7 @@ public class CountryPicker extends TextInputEditText {
     public void setSelectedCountry(Country selectedCountry) {
         this.selectedCountry = selectedCountry;
     }
+
 
     public enum Language {
         ENGLISH("en");
@@ -463,8 +487,24 @@ public class CountryPicker extends TextInputEditText {
     }
 
     public void launchCountrySelectionDialog() {
-        CountryCodePickerDialog.openPickerDialog(this);
+        if (showFullscreenDialog) {
+            try {
+                Intent intent = new Intent(getContext(), CountryPickerActivity.class);
+                ((Activity) getContext()).startActivityForResult(intent, PICKER_REQUEST_CODE);
+            } catch (ClassCastException e) {
+                e.printStackTrace();
+            }
+        } else {
+            CountryPickerDialog.openPickerDialog(this);
+        }
     }
 
+    public void handleActivityResult(Intent data) {
+        Country country = data.getParcelableExtra(EXTRA_COUNTRY);
+        Log.d(TAG, "Country: " + country);
+        setSelectedCountry(country);
+        invalidCountryCode(country);
+
+    }
 
 }

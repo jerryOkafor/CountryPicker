@@ -1,6 +1,5 @@
 package me.jerryhanks.countrypicker;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.support.annotation.Nullable;
@@ -9,29 +8,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.futuremind.recyclerviewfastscroll.FastScroller;
-import com.google.gson.FieldNamingPolicy;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
 import java.util.List;
 
 /**
  * @author Jerry Hanks on 12/14/17.
  */
 
-public class CountryCodePickerDialog {
+public class CountryPickerDialog {
     private static Dialog INSTANCE = null;
 
     public static void openPickerDialog(final CountryPicker picker) {
@@ -40,7 +30,7 @@ public class CountryCodePickerDialog {
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         if (dialog.getWindow() != null)
-            dialog.getWindow().setContentView(R.layout.layout_picker_dialog);
+            dialog.getWindow().setContentView(R.layout.layout_country_picker);
 
         //keyboard
         if (picker.isSearchAllowed() && picker.isDialogKeyboardAutoPopup()) {
@@ -51,7 +41,7 @@ public class CountryCodePickerDialog {
 
 
         //list all the countries
-        List<Country> countries = loadDataFromJson(context);
+        List<Country> countries = Util.loadDataFromJson(context);
 
         //set up dialog views
         //dialog views
@@ -72,12 +62,12 @@ public class CountryCodePickerDialog {
         //set click listeners
         imgDismiss.setOnClickListener(v -> dialog.dismiss());
 
-        final CountryCodeAdapter.OnItemClickCallback callback = country -> {
+        final CountryAdapter.OnItemClickCallback callback = country -> {
             picker.updateCountry(country);
             dialog.dismiss();
         };
 
-        final CountryCodeAdapter cca = new CountryCodeAdapter(context, callback, countries, rlQueryHolder, searchView, tvNoResult);
+        final CountryAdapter cca = new CountryAdapter(context, callback, countries, rlQueryHolder, searchView, tvNoResult);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(cca);
 
@@ -115,52 +105,6 @@ public class CountryCodePickerDialog {
             return new Dialog(context);
         }
         return INSTANCE;
-    }
-
-    public static List<Country> loadDataFromJson(Context context) {
-
-        InputStream inputStream = context.getResources().openRawResource(R.raw.country_codes);
-        String jsonString = readJsonFile(inputStream);
-
-        //create gson
-        GsonBuilder gsonBuilder = new GsonBuilder();
-        gsonBuilder.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_DASHES);
-        Gson gson = gsonBuilder.create();
-
-        Country[] countries = gson.fromJson(jsonString, Country[].class);
-        List<Country> countryList = Arrays.asList(countries);
-        return countryList;
-    }
-
-    private static String readJsonFile(InputStream inputStream) {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        byte bufferByte[] = new byte[1024];
-        int length;
-        try {
-            while ((length = inputStream.read(bufferByte)) != -1) {
-                outputStream.write(bufferByte, 0, length);
-            }
-            outputStream.close();
-            inputStream.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return outputStream.toString();
-    }
-
-    private static void hideKeyboard(Context context) {
-        if (context instanceof Activity) {
-            Activity activity = (Activity) context;
-            InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
-            //Find the currently focused view, so we can grab the correct window token from it.
-            View view = activity.getCurrentFocus();
-            //If no view currently has focus, create a new one, just so we can grab a window token from it
-            if (view == null) {
-                view = new View(activity);
-            }
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-        }
     }
 
 

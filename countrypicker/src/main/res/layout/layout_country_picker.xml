@@ -44,22 +44,6 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/rl_title">
 
-ew
-        <ImageView
-            android:id="@+id/img_clear_query"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:alpha="0.7"
-            android:background="@drawable/ccp_selectable_bg"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="10dp"
-            android:visibility="gone"
-            app:srcCompat="@drawable/ic_backspace_black_24dp" />
-
         <SearchView
             android:id="@+id/searchView"
             android:layout_width="match_parent"

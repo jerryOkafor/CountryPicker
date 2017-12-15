@@ -21,15 +21,15 @@ import java.util.List;
  * @author Jerry Hanks on 12/14/17.
  */
 
-class CountryCodeAdapter extends RecyclerView.Adapter<CountryCodeAdapter.CountryCodeViewHolder> implements Filterable {
+class CountryAdapter extends RecyclerView.Adapter<CountryAdapter.CountryCodeViewHolder> implements Filterable {
     private final Context context;
     private final List<Country> countries;
     private final TextView tvNoResult;
     private List<Country> filteredCountries;
     private final OnItemClickCallback clickListener;
 
-    public CountryCodeAdapter(Context context, @NonNull OnItemClickCallback callback, List<Country> countries,
-                              RelativeLayout rlQueryHolder, SearchView searchView, TextView tvNoResult) {
+    public CountryAdapter(Context context, @NonNull OnItemClickCallback callback, List<Country> countries,
+                          RelativeLayout rlQueryHolder, SearchView searchView, TextView tvNoResult) {
         this.context = context;
         this.clickListener = callback;
         this.countries = countries;
@@ -83,9 +83,9 @@ class CountryCodeAdapter extends RecyclerView.Adapter<CountryCodeAdapter.Country
                 } else {
                     ArrayList<Country> filteredList = new ArrayList<>();
                     for (Country country : countries) {
-                        if (country.getCode().contains(charString) || country.getName().contains(charString)
-                                || country.getCode().toLowerCase().contains(charString)
-                                || country.getName().toLowerCase().contains(charString)) {
+                        if (country.getCode().startsWith(charString) || country.getName().startsWith(charString)
+                                || country.getCode().toLowerCase().startsWith(charString)
+                                || country.getName().toLowerCase().startsWith(charString)) {
                             filteredList.add(country);
                         }
                     }
@@ -166,7 +166,7 @@ class CountryCodeAdapter extends RecyclerView.Adapter<CountryCodeAdapter.Country
                 flagWrapper.setVisibility(View.VISIBLE);
                 tvName.setText(context.getString(R.string.format_country, country.getName(), country.getCode().toUpperCase()));
                 tvCode.setText(context.getString(R.string.plus_prefix, country.getDialCode()));
-                ivFlag.setImageResource(Country.getFlagResID(country));
+                ivFlag.setImageResource(Util.getFlagResID(country));
             } else {
                 divider.setVisibility(View.VISIBLE);
                 tvName.setVisibility(View.GONE);
