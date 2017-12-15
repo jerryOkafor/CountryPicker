@@ -8,8 +8,6 @@ import android.support.annotation.NonNull;
 import com.google.gson.annotations.SerializedName;
 
 import java.text.Collator;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author Jerry Hanks on 12/14/17.
@@ -27,10 +25,6 @@ public class Country implements Comparable<Country>, Parcelable {
 
     private @DrawableRes
     int flagResID = DEFAULT_FLAG_RES;
-
-    static CountryPicker.Language loadedLibraryMasterListLanguage;
-    static String dialogTitle, searchHintMessage, noResultFoundAckMessage;
-    List<Country> countryList;
 
     public Country(String name, String dialCode, String code) {
         this.dialCode = dialCode;
@@ -79,17 +73,12 @@ public class Country implements Comparable<Country>, Parcelable {
         dest.writeString(this.name);
         dest.writeString(this.dialCode);
         dest.writeString(this.code);
-        dest.writeInt(this.flagResID);
-        dest.writeList(this.countryList);
     }
 
     protected Country(Parcel in) {
         this.name = in.readString();
         this.dialCode = in.readString();
         this.code = in.readString();
-        this.flagResID = in.readInt();
-        this.countryList = new ArrayList<Country>();
-        in.readList(this.countryList, Country.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<Country> CREATOR = new Parcelable.Creator<Country>() {

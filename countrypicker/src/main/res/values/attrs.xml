@@ -10,6 +10,9 @@
         <attr name="cp_dialogKeyboardAutoPopup" format="boolean" />
         <attr name="cp_showFullScreeDialog" format="boolean" />
 
+        <attr name="cp_showCountryCode" format="boolean" />
+        <attr name="cp_showCountryDialCode" format="boolean" />
+
         <!--Dialog props-->
         <attr name="fastScrollerBubbleColor" format="color" />
         <attr name="fastScrollerHandleColor" format="color" />

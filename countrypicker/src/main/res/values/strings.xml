@@ -7,4 +7,6 @@
     <string name="format_country">%s ( %s )</string>
     <string name="plus_prefix">%s</string>
     <string name="fmt_code_and_dial_code">(%s) %s</string>
+    <string name="fmt_dial_code">%s</string>
+    <string name="fmt_code">(%s)</string>
 </resources>

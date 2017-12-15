@@ -23,7 +23,7 @@ import java.util.List;
 public class Util {
     public static List<Country> loadDataFromJson(Context context) {
 
-        InputStream inputStream = context.getResources().openRawResource(R.raw.country_codes);
+        InputStream inputStream = context.getResources().openRawResource(R.raw.english);
         String jsonString = readJsonFile(inputStream);
 
         //create gson

@@ -3,6 +3,7 @@ package me.jerryhanks.countrypicker;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -39,6 +40,7 @@ public class CountryPicker extends TextInputEditText {
     public static final String EXTRA_SHOW_FAST_SCROLL_BUBBLE_COLOR = "me.jerryhanks.countrypicker_EXTRA_SHOW_FAST_BUBBLE_COLOR";
     public static final String EXTRA_SHOW_FAST_SCROLL_HANDLER_COLOR = "me.jerryhanks.countrypicker_EXTRA_SHOW_FAST_HANDLE_COLOR";
     public static final String EXTRA_SHOW_FAST_SCROLL_BUBBLE_TEXT_APPEARANCE = "me.jerryhanks.countrypicker_EXTRA_SHOW_FAST_BUBBLE_TEXT_APPEARANCE";
+    private static final String CP_PREF_FILE = "cp_pref_file";
     private boolean isRTL;
     private boolean searchAllowed;
     private boolean dialogKeyboardAutoPopup;
@@ -53,6 +55,9 @@ public class CountryPicker extends TextInputEditText {
     private Language languageToApply = Language.ENGLISH;
     private AutoDetectionPref selectedAutoDetectionPref;
     private boolean showFullscreenDialog;
+    private boolean showCountryCode;
+    private boolean showCountryDialCode;
+    private String lastSelectionTag = "last_selection_tag";
 
     public CountryPicker(Context context) {
         this(context, null);
@@ -74,6 +79,12 @@ public class CountryPicker extends TextInputEditText {
             TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.CountryPicker, defStyleAttr, 0);
             try {
 
+                //show country code
+                showCountryCode = a.getBoolean(R.styleable.CountryPicker_cp_showCountryCode, false);
+
+                //show country dial code
+                showCountryDialCode = a.getBoolean(R.styleable.CountryPicker_cp_showCountryDialCode, false);
+
                 //default Country
                 defaultCountryName = a.getString(R.styleable.CountryPicker_cp_defaultCountryName);
 
@@ -92,9 +103,10 @@ public class CountryPicker extends TextInputEditText {
                 //scroller text appearance
                 fastScrollerBubbleTextAppearance = a.getResourceId(R.styleable.CountryPicker_fastScrollerBubbleTextAppearance, 0);
 
-
+                //allow the user to search
                 searchAllowed = a.getBoolean(R.styleable.CountryPicker_cp_searchAllowed, true);
 
+                //keyboard auto pop up when dialog is showing
                 dialogKeyboardAutoPopup = a.getBoolean(R.styleable.CountryPicker_cp_dialogKeyboardAutoPopup, true);
 
                 //country auto detection pref
@@ -195,10 +207,25 @@ public class CountryPicker extends TextInputEditText {
         tvCode.setTypeface(getTypeface());
         tvCode.setTextSize(getTextSize());
         tvCode.setTextColor(getTextColors());
-        tvCode.setText(getContext().getString(R.string.fmt_code_and_dial_code, code, dialCode));
+
+        if (!isShowCountryCode()) {
+            tvCode.setText(getContext().getString(R.string.fmt_dial_code, dialCode));
+        }
+
+        if (!isShowCountryDialCode()) {
+            tvCode.setText(getContext().getString(R.string.fmt_code, code));
+        }
+
+        if (isShowCountryDialCode() && isShowCountryCode()) {
+            tvCode.setText(getContext().getString(R.string.fmt_code_and_dial_code, code, dialCode));
+        } else {
+            tvCode.setVisibility(View.GONE);
+        }
+
 
         ImageView ivFlag = wrapper.findViewById(R.id.ivFlag);
         ivFlag.setImageResource(drawableId);
+
 
         wrapper.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
                 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
@@ -432,6 +459,24 @@ public class CountryPicker extends TextInputEditText {
 
     public void setSelectedCountry(Country selectedCountry) {
         this.selectedCountry = selectedCountry;
+        saveLastSelectedCountryCode(this.selectedCountry.getCode());
+        invalidCountryCode(this.selectedCountry);
+    }
+
+    public boolean isShowCountryCode() {
+        return showCountryCode;
+    }
+
+    public void setShowCountryCode(boolean showCountryCode) {
+        this.showCountryCode = showCountryCode;
+    }
+
+    public boolean isShowCountryDialCode() {
+        return showCountryDialCode;
+    }
+
+    public void setShowCountryDialCode(boolean showCountryDialCode) {
+        this.showCountryDialCode = showCountryDialCode;
     }
 
 
@@ -512,4 +557,34 @@ public class CountryPicker extends TextInputEditText {
 
     }
 
+
+    /**
+     * Saves the last selected Country code into Sharedpref
+     * when remember last selection is set
+     */
+    private void saveLastSelectedCountryCode(String countryCode) {
+        //get instance of the shared pref
+        SharedPreferences preferences = getContext().getSharedPreferences(CP_PREF_FILE, Context.MODE_PRIVATE);
+
+        //get the Editor
+        SharedPreferences.Editor editor = preferences.edit();
+
+        //put the code into the editor
+        editor.putString(lastSelectionTag, countryCode);
+
+        //save the code
+        editor.apply();
+
+    }
+
+    private void loadLastSelectedCountryCode() {
+        //get instance of the shared pref
+        SharedPreferences preferences = getContext().getSharedPreferences(CP_PREF_FILE, Context.MODE_PRIVATE);
+
+        //get the last selected country code
+        String lastSelectedCode = preferences.getString(lastSelectionTag, "ng");
+
+        //set the country
+        setSelectedCountry(getCountryForName(languageToApply, lastSelectedCode));
+    }
 }
