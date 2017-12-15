@@ -15,7 +15,7 @@
         android:layout_height="26dp"
         android:layout_gravity="start|center_vertical"
         android:scaleType="centerCrop"
-        app:srcCompat="@drawable/flag_afghanistan" />
+        app:srcCompat="@drawable/af" />
 
     <ImageView
         android:id="@+id/btnPick"
