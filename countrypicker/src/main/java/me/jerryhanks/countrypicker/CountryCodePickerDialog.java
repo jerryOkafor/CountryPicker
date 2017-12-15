@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.futuremind.recyclerviewfastscroll.FastScroller;
@@ -54,14 +55,18 @@ public class CountryCodePickerDialog {
 
         //set up dialog views
         //dialog views
-        RecyclerView recyclerView_countryDialog = dialog.findViewById(R.id.recycler_countryDialog);
+        RecyclerView recyclerView = dialog.findViewById(R.id.recycler_countryDialog);
+
         final TextView textViewTitle = dialog.findViewById(R.id.textView_title);
+
         RelativeLayout rlQueryHolder = dialog.findViewById(R.id.rl_query_holder);
-        ImageView imgClearQuery = dialog.findViewById(R.id.img_clear_query);
-        final EditText editText_search = dialog.findViewById(R.id.editText_search);
-        TextView textView_noResult = dialog.findViewById(R.id.textView_noresult);
+
+        TextView tvNoResult = dialog.findViewById(R.id.textView_noresult);
+
         RelativeLayout rlHolder = dialog.findViewById(R.id.rl_holder);
+
         ImageView imgDismiss = dialog.findViewById(R.id.ivDismiss);
+        SearchView searchView = dialog.findViewById(R.id.searchView);
 
 
         //set click listeners
@@ -72,13 +77,13 @@ public class CountryCodePickerDialog {
             dialog.dismiss();
         };
 
-        final CountryCodeAdapter cca = new CountryCodeAdapter(context, callback, countries, rlQueryHolder, editText_search, textView_noResult, dialog, imgClearQuery);
-        recyclerView_countryDialog.setLayoutManager(new LinearLayoutManager(context));
-        recyclerView_countryDialog.setAdapter(cca);
+        final CountryCodeAdapter cca = new CountryCodeAdapter(context, callback, countries, rlQueryHolder, searchView, tvNoResult);
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.setAdapter(cca);
 
         //fast scroller
         FastScroller fastScroller = dialog.findViewById(R.id.fastScroll);
-        fastScroller.setRecyclerView(recyclerView_countryDialog);
+        fastScroller.setRecyclerView(recyclerView);
         if (picker.isShowFastScroller()) {
             if (picker.getFastScrollerBubbleColor() != 0) {
                 fastScroller.setBubbleColor(picker.getFastScrollerBubbleColor());
