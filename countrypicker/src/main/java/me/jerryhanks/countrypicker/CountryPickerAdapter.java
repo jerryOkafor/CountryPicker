@@ -3,6 +3,7 @@ package me.jerryhanks.countrypicker;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,6 @@ import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
@@ -65,7 +65,7 @@ class CountryPickerAdapter extends RecyclerView.Adapter<CountryPickerAdapter.Cou
     @Override
     public void onBindViewHolder(CountryCodeViewHolder holder, int position) {
         Country country = filteredCountries.get(position);
-        holder.setCountry(country);
+        holder.setCountry(country, position);
         holder.itemView.setOnClickListener(v -> clickListener.onItemClick(country));
 
     }
@@ -169,10 +169,12 @@ class CountryPickerAdapter extends RecyclerView.Adapter<CountryPickerAdapter.Cou
 //            }
         }
 
-        public void setCountry(Country country) {
+        public void setCountry(Country country, int position) {
+            if (position == 0) {
+                divider.setVisibility(View.GONE);
+            }
 
             if (country != null) {
-//                divider.setVisibility(View.GONE);
                 tvName.setVisibility(View.VISIBLE);
                 tvCode.setVisibility(View.VISIBLE);
 

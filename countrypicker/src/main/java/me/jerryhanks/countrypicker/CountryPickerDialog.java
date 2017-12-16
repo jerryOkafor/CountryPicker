@@ -5,12 +5,12 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.SearchView;
 import android.widget.TextView;
 
 import com.futuremind.recyclerviewfastscroll.FastScroller;
@@ -56,6 +56,7 @@ public class CountryPickerDialog {
         RelativeLayout rlHolder = dialog.findViewById(R.id.rl_holder);
 
         ImageView imgDismiss = dialog.findViewById(R.id.ivDismiss);
+
         SearchView searchView = dialog.findViewById(R.id.searchView);
 
 

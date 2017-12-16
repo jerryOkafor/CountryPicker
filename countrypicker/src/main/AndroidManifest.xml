@@ -3,7 +3,9 @@
     package="me.jerryhanks.countrypicker">
 
     <application>
-        <activity android:name=".CountryPickerActivity"></activity>
+        <activity
+            android:name=".CountryPickerActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>

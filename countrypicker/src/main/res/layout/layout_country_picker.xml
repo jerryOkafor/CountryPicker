@@ -35,7 +35,7 @@
             android:clickable="true"
             android:focusable="true"
             android:padding="4dp"
-            app:srcCompat="@drawable/ic_clear_black_24dp" />
+            app:srcCompat="@drawable/ic_clear_black" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/rl_title">
 
-        <SearchView
+        <android.support.v7.widget.SearchView
             android:id="@+id/searchView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,36 +53,9 @@
             android:queryHint="@string/search_hint" />
     </RelativeLayout>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recycler_countryDialog"
+    <include
+        layout="@layout/picker_ui"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/rl_query_holder"
-        android:layout_marginTop="@dimen/dp_8"
-        android:dividerHeight="2dp" />
-
-    <com.futuremind.recyclerviewfastscroll.FastScroller
-        android:id="@+id/fastScroll"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignBottom="@+id/recycler_countryDialog"
-        android:layout_alignEnd="@+id/recycler_countryDialog"
-        android:layout_alignRight="@+id/recycler_countryDialog"
-        android:layout_alignTop="@+id/recycler_countryDialog"
-        android:orientation="vertical"
-        app:fastscroll__bubbleColor="#5e64ce"
-        app:fastscroll__bubbleTextAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:fastscroll__handleColor="#8f93d1" />
-
-    <TextView
-        android:id="@+id/textView_noresult"
-        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/rl_query_holder"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:text="@string/no_result_found"
-        android:textColor="@android:color/primary_text_light"
-        android:visibility="gone" />
-
+        android:layout_below="@id/rl_query_holder" />
 </RelativeLayout>
