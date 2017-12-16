@@ -4,6 +4,7 @@
         <attr name="cp_defaultCountryName" format="string" />
 
         <!--bool-->
+        <!--Auto detection takes preference True by default-->
         <attr name="cp_autoDetectCountry" format="boolean" />
         <attr name="cp_searchAllowed" format="boolean" />
         <attr name="cp_showFastScroll" format="boolean" />
@@ -12,6 +13,7 @@
 
         <attr name="cp_showCountryCode" format="boolean" />
         <attr name="cp_showCountryDialCode" format="boolean" />
+        <attr name="cp_rememberLastSelection" format="boolean" />
 
         <!--Dialog props-->
         <attr name="fastScrollerBubbleColor" format="color" />

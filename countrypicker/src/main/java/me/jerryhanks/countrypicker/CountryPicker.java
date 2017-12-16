@@ -12,11 +12,14 @@ import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.support.design.widget.TextInputEditText;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -51,13 +54,14 @@ public class CountryPicker extends TextInputEditText {
     private Country selectedCountry = new Country("Nigeria", "+234", "NG");
     private BitmapDrawable chip;
     private String defaultCountryName;
-    private boolean autoDetectCountryEnabled = true;
+    private boolean autoDetectCountryEnabled;
     private Language languageToApply = Language.ENGLISH;
     private AutoDetectionPref selectedAutoDetectionPref;
     private boolean showFullscreenDialog;
     private boolean showCountryCode;
     private boolean showCountryDialCode;
     private String lastSelectionTag = "last_selection_tag";
+    private boolean rememberLastSelection;
 
     public CountryPicker(Context context) {
         this(context, null);
@@ -87,6 +91,9 @@ public class CountryPicker extends TextInputEditText {
 
                 //default Country
                 defaultCountryName = a.getString(R.styleable.CountryPicker_cp_defaultCountryName);
+
+                //remember last selection
+                rememberLastSelection = a.getBoolean(R.styleable.CountryPicker_cp_rememberLastSelection, false);
 
                 //show fullscreen Dialog
                 showFullscreenDialog = a.getBoolean(R.styleable.CountryPicker_cp_showFullScreeDialog, true);
@@ -122,6 +129,17 @@ public class CountryPicker extends TextInputEditText {
             }
         }
 
+
+        //if remember last selection is set and default country is not set
+        if (TextUtils.isEmpty(defaultCountryName) && rememberLastSelection) {
+            Log.d(TAG, "Loading last saved country code!");
+            loadLastSelectedCountryCode();
+        }
+
+        //load the default country if it was set by the user
+        if (!TextUtils.isEmpty(defaultCountryName)) {
+            setSelectedCountry(getCountryForName(languageToApply, defaultCountryName));
+        }
 
         //implement auto Country detection if it is set
         if (isAutoDetectCountryEnabled() && !isInEditMode()) {
@@ -437,10 +455,10 @@ public class CountryPicker extends TextInputEditText {
         }
     }
 
-    private Country getCountryForName(Language languageToApply, String simCountryISO) {
+    private Country getCountryForName(Language languageToApply, String contryCode) {
         List<Country> countries = Util.loadDataFromJson(getContext());
         for (Country country : countries) {
-            if (simCountryISO.equals(country.getCode()))
+            if (contryCode.equals(country.getCode()))
                 return country;
         }
         return new Country("Nigeria", "+234", "NG");
@@ -586,5 +604,61 @@ public class CountryPicker extends TextInputEditText {
 
         //set the country
         setSelectedCountry(getCountryForName(languageToApply, lastSelectedCode));
+    }
+
+    @Override
+    public Parcelable onSaveInstanceState() {
+        Parcelable superState = super.onSaveInstanceState();
+        return new SavedState(superState, getSelectedCountryCode());
+
+    }
+
+    @Override
+    public void onRestoreInstanceState(Parcelable state) {
+        SavedState savedState = (SavedState) state;
+        super.onRestoreInstanceState(savedState.getSuperState());
+        String countryCode = savedState.getCountryCode();
+        if (countryCode != null) {
+            setSelectedCountry(getCountryForName(languageToApply, countryCode));
+        }
+    }
+
+    //convenient class to save and restore the view state
+
+    protected static class SavedState extends BaseSavedState {
+
+        private String countryCode;
+
+        private SavedState(Parcelable source, String countryCode) {
+            super(source);
+            this.countryCode = countryCode;
+        }
+
+        private SavedState(Parcel source) {
+            super(source);
+        }
+
+        private String getCountryCode() {
+            return countryCode;
+        }
+
+        @Override
+        public void writeToParcel(Parcel out, int flags) {
+            super.writeToParcel(out, flags);
+            out.writeString(this.countryCode);
+        }
+
+        public static final Parcelable.Creator<SavedState> CREATOR = new Creator<SavedState>() {
+
+            public SavedState createFromParcel(Parcel in) {
+                return new SavedState(in);
+            }
+
+            public SavedState[] newArray(int size) {
+                return new SavedState[size];
+            }
+
+        };
+
     }
 }
