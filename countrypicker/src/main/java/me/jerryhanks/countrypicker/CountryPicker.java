@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.design.widget.TextInputEditText;
-import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
@@ -35,7 +34,7 @@ import java.util.List;
  */
 
 public class CountryPicker extends TextInputEditText {
-    private final static int EXTRA_TAPPABLE_AREA = 5;
+    private final static int EXTRA_PADDING = 5;
     private static final String TAG = CountryPicker.class.getSimpleName();
     public static final int PICKER_REQUEST_CODE = 101;
     public static final String EXTRA_COUNTRY = "me.jerryhanks.countrypicker_EXTRA_COUNTRY";
@@ -83,22 +82,24 @@ public class CountryPicker extends TextInputEditText {
             TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.CountryPicker, defStyleAttr, 0);
             try {
 
-                //show country code
+                //show country code: false by default
                 showCountryCode = a.getBoolean(R.styleable.CountryPicker_cp_showCountryCode, false);
 
-                //show country dial code
+                //show country dial code : false by default
                 showCountryDialCode = a.getBoolean(R.styleable.CountryPicker_cp_showCountryDialCode, false);
 
-                //default Country
+                //default Country : null/empty by default
                 defaultCountryName = a.getString(R.styleable.CountryPicker_cp_defaultCountryName);
 
-                //remember last selection
+                //remember last selection : false by default
                 rememberLastSelection = a.getBoolean(R.styleable.CountryPicker_cp_rememberLastSelection, false);
 
-                //show fullscreen Dialog
-                showFullscreenDialog = a.getBoolean(R.styleable.CountryPicker_cp_showFullScreeDialog, true);
+                //show fullscreen Dialog : false by default, let the user decide
+                //when they want to show full screen
+                showFullscreenDialog = a.getBoolean(R.styleable.CountryPicker_cp_showFullScreeDialog, false);
 
-                //show fast scroller
+                //show fast scroller : true by default, always show fast scroll
+                //let the user decide when they want to hide the fast scroll
                 showFastScroller = a.getBoolean(R.styleable.CountryPicker_cp_showFastScroll, true);
 
                 //bubble color
@@ -110,18 +111,19 @@ public class CountryPicker extends TextInputEditText {
                 //scroller text appearance
                 fastScrollerBubbleTextAppearance = a.getResourceId(R.styleable.CountryPicker_fastScrollerBubbleTextAppearance, 0);
 
-                //allow the user to search
+                //allow the user to search : true by default, let the user search all the time
+                //and decide when they do not want search
                 searchAllowed = a.getBoolean(R.styleable.CountryPicker_cp_searchAllowed, true);
 
-                //keyboard auto pop up when dialog is showing
+                //keyboard auto pop up when dialog is showing : true by default
+                //always show the keyboard as soon as possible
                 dialogKeyboardAutoPopup = a.getBoolean(R.styleable.CountryPicker_cp_dialogKeyboardAutoPopup, true);
 
-                //country auto detection pref
+                //country auto detection pref : default to SIM_NETWORK_LOCALE in that order
                 int autoDetectionPrefValue = a.getInt(R.styleable.CountryPicker_cp_countryAutoDetectionPref, 123);
                 selectedAutoDetectionPref = AutoDetectionPref.getPrefForValue(String.valueOf(autoDetectionPrefValue));
 
-
-                //auto detect country
+                //auto detect country : default to true, always try to detect the country of the user
                 autoDetectCountryEnabled = a.getBoolean(R.styleable.CountryPicker_cp_autoDetectCountry, true);
 
             } finally {
@@ -149,11 +151,16 @@ public class CountryPicker extends TextInputEditText {
         isRTL = isRTLLanguage();
         setInputType(InputType.TYPE_CLASS_NUMBER);
 
-        invalidCountryCode(selectedCountry);
+        updateSelectedCountry(selectedCountry);
 
     }
 
-    private void startAutoCountryDetection(boolean loadDefaultWhenFails) {
+    /**
+     * Detects and load the detect country
+     *
+     * @param resetDefault used to reset to the default country when loading the detected country fail
+     */
+    private void startAutoCountryDetection(boolean resetDefault) {
         try {
             boolean successfullyDetected = false;
             for (int i = 0; i < selectedAutoDetectionPref.representation.length(); i++) {
@@ -179,24 +186,34 @@ public class CountryPicker extends TextInputEditText {
                 }
             }
 
-            if (!successfullyDetected && loadDefaultWhenFails) {
+            if (!successfullyDetected && resetDefault) {
                 resetToDefaultCountry();
             }
         } catch (Exception e) {
             e.printStackTrace();
             Log.w(TAG, "setAutoDetectCountry: Exception" + e.getMessage());
-            if (loadDefaultWhenFails) {
+            if (resetDefault) {
                 resetToDefaultCountry();
             }
         }
 
     }
 
+    /**
+     * Return the selected Country name
+     *
+     * @return {@code String} name of the selected country
+     */
     private String getSelectedCountryName() {
         return this.selectedCountry.getName();
     }
 
-    private void invalidCountryCode(Country country) {
+    /**
+     * Updates the CountryPicker with the selected Country
+     *
+     * @param country Selected country
+     */
+    private void updateSelectedCountry(Country country) {
         CharSequence dialCode;
         CharSequence code;
         int drawableId;
@@ -217,6 +234,13 @@ public class CountryPicker extends TextInputEditText {
     }
 
 
+    /**
+     * Draws the Country flag, code and dial code and return it as a drawable
+     *
+     * @param dialCode   Country dial code
+     * @param code       County code.
+     * @param drawableId Drawable id for the flag
+     */
     private BitmapDrawable createClusterBitmap(CharSequence dialCode, CharSequence code, int drawableId) {
         View wrapper = LayoutInflater.from(getContext()).inflate(R.layout.picker_view,
                 null);
@@ -262,8 +286,8 @@ public class CountryPicker extends TextInputEditText {
     public boolean onTouchEvent(MotionEvent event) {
         final Rect bounds = chip.getBounds();
         final int x = (int) event.getX();
-        int iconXRect = isRTL ? getRight() - bounds.width() - EXTRA_TAPPABLE_AREA :
-                getLeft() + bounds.width() + EXTRA_TAPPABLE_AREA;
+        int iconXRect = isRTL ? getRight() - bounds.width() - EXTRA_PADDING :
+                getLeft() + bounds.width() + EXTRA_PADDING;
 
         switch (event.getAction()) {
             case MotionEvent.ACTION_UP: {
@@ -278,7 +302,11 @@ public class CountryPicker extends TextInputEditText {
 
     }
 
-
+    /**
+     * Checks if RTL is enabled in the device
+     *
+     * @return {@code true} if enabled or {@code false} otherwise
+     */
     private boolean isRTLLanguage() {
         // as getLayoutDirection was introduced in API 17, under 17 we default to LTR
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
@@ -314,7 +342,7 @@ public class CountryPicker extends TextInputEditText {
 
     public void updateCountry(Country country) {
         this.selectedCountry = country;
-        invalidCountryCode(this.selectedCountry);
+        updateSelectedCountry(this.selectedCountry);
 
     }
 
@@ -478,7 +506,7 @@ public class CountryPicker extends TextInputEditText {
     public void setSelectedCountry(Country selectedCountry) {
         this.selectedCountry = selectedCountry;
         saveLastSelectedCountryCode(this.selectedCountry.getCode());
-        invalidCountryCode(this.selectedCountry);
+        updateSelectedCountry(this.selectedCountry);
     }
 
     public boolean isShowCountryCode() {
@@ -571,7 +599,7 @@ public class CountryPicker extends TextInputEditText {
         Country country = data.getParcelableExtra(EXTRA_COUNTRY);
         Log.d(TAG, "Country: " + country);
         setSelectedCountry(country);
-        invalidCountryCode(country);
+        updateSelectedCountry(country);
 
     }
 
