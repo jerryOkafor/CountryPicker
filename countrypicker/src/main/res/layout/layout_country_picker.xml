@@ -35,6 +35,7 @@
             android:clickable="true"
             android:focusable="true"
             android:padding="4dp"
+            android:tint="#000000"
             app:srcCompat="@drawable/ic_clear_black" />
     </RelativeLayout>
 

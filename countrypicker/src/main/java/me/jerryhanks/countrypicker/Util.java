@@ -21,6 +21,12 @@ import java.util.List;
  */
 
 public class Util {
+
+    /**
+     * Loads a list of Country
+     *
+     * @param context The given context
+     */
     public static List<Country> loadDataFromJson(Context context) {
 
         InputStream inputStream = context.getResources().openRawResource(R.raw.english);
@@ -32,10 +38,14 @@ public class Util {
         Gson gson = gsonBuilder.create();
 
         Country[] countries = gson.fromJson(jsonString, Country[].class);
-        List<Country> countryList = Arrays.asList(countries);
-        return countryList;
+        return Arrays.asList(countries);
     }
 
+    /**
+     * Reads json file given an inputStream and return a json string
+     *
+     * @param inputStream The input stream to read from
+     */
     private static String readJsonFile(InputStream inputStream) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
@@ -53,6 +63,11 @@ public class Util {
         return outputStream.toString();
     }
 
+    /**
+     * Util method used to hide the keyboard
+     *
+     * @param context The UI context
+     */
     private static void hideKeyboard(Context context) {
         if (context instanceof Activity) {
             Activity activity = (Activity) context;
@@ -63,7 +78,8 @@ public class Util {
             if (view == null) {
                 view = new View(activity);
             }
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            if (imm != null)
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
         }
     }
 
@@ -124,13 +140,11 @@ public class Util {
             case "bj": //benin
                 return R.drawable.bj;
             case "bl": //saint barthélemy
-                // TODO: 12/15/17
-                return R.drawable.bj;// custom
+                return R.drawable.bj;// custom // TODO: 12/15/17
             case "bm": //bermuda
-                // TODO: 12/15/17
-                return R.drawable.bj;
+                return R.drawable.bj;// TODO: 12/15/17
             case "bn": //brunei darussalam // custom
-                return R.drawable.bo;
+                return R.drawable.bn;
             case "bo": //bolivia, plurinational state of
                 return R.drawable.bo;
             case "br": //brazil
@@ -148,8 +162,7 @@ public class Util {
             case "ca": //canada
                 return R.drawable.ca;
             case "cc": //cocos (keeling) islands
-                // TODO: 12/15/17
-                return R.drawable.ca;// custom
+                return R.drawable.ca;// custom // TODO: 12/15/17
             case "cd": //congo, the democratic republic of the
                 return R.drawable.cd;
             case "cf": //central african republic
@@ -161,8 +174,7 @@ public class Util {
             case "ci": //côte d\'ivoire
                 return R.drawable.ci;
             case "ck": //cook islands
-                // TODO: 12/15/17
-                return R.drawable.ci;
+                return R.drawable.ci;// TODO: 12/15/17
             case "cl": //chile
                 return R.drawable.cl;
             case "cm": //cameroon
@@ -178,8 +190,7 @@ public class Util {
             case "cv": //cape verde
                 return R.drawable.cv;
             case "cx": //christmas island
-                // TODO: 12/15/17
-                return R.drawable.cv;
+                return R.drawable.cv;// TODO: 12/15/17
             case "cy": //cyprus
                 return R.drawable.cy;
             case "cz": //czech republic
@@ -213,13 +224,11 @@ public class Util {
             case "fj": //fiji
                 return R.drawable.fj;
             case "fk": //falkland islands (malvinas)
-                // TODO: 12/15/17
-                return R.drawable.fj;
+                return R.drawable.fj; // TODO: 12/15/17
             case "fm": //micronesia, federated states of
                 return R.drawable.fm;
             case "fo": //faroe islands
-                // TODO: 12/15/17
-                return R.drawable.fm;
+                return R.drawable.fm; // TODO: 12/15/17
             case "fr": //france
                 return R.drawable.fr;
             case "ga": //gabom
@@ -231,16 +240,13 @@ public class Util {
             case "ge": //georgia
                 return R.drawable.ge;
             case "gf": //guyane
-                // TODO: 12/15/17
-                return R.drawable.ge;
+                return R.drawable.ge;// TODO: 12/15/17
             case "gh": //ghana
                 return R.drawable.gh;
             case "gi": //gibraltar
-                // TODO: 12/15/17
-                return R.drawable.gh;
+                return R.drawable.gh;// TODO: 12/15/17
             case "gl": //greenland
-                // TODO: 12/15/17
-                return R.drawable.gh;
+                return R.drawable.gh; // TODO: 12/15/17
             case "gm": //gambia
                 return R.drawable.gm;
             case "gn": //guinea
@@ -256,8 +262,7 @@ public class Util {
             case "gy": //guyana
                 return R.drawable.gy;
             case "hk": //hong kong
-                // TODO: 12/15/17
-                return R.drawable.gy;
+                return R.drawable.gy; // TODO: 12/15/17
             case "hn": //honduras
                 return R.drawable.hn;
             case "hr": //croatia
@@ -273,8 +278,7 @@ public class Util {
             case "il": //israel
                 return R.drawable.il;
             case "im": //isle of man
-                // TODO: 12/15/17
-                return R.drawable.il; // custom
+                return R.drawable.il; // custom  // TODO: 12/15/17
             case "is": //Iceland
                 return R.drawable.is;
             case "in": //india
@@ -310,8 +314,7 @@ public class Util {
             case "kw": //kuwait
                 return R.drawable.kw;
             case "ky": //Cayman_Islands
-                // TODO: 12/15/17
-                return R.drawable.kw;
+                return R.drawable.kw; // TODO: 12/15/17
             case "kz": //kazakhstan
                 return R.drawable.kz;
             case "la": //lao people\'s democratic republic
@@ -357,16 +360,13 @@ public class Util {
             case "mn": //mongolia
                 return R.drawable.mn;
             case "mo": //macao
-                // TODO: 12/15/17
-                return R.drawable.mn;
+                return R.drawable.mn;// TODO: 12/15/17
             case "mq": //martinique
-                // TODO: 12/15/17
-                return R.drawable.mn;
+                return R.drawable.mn; // TODO: 12/15/17
             case "mr": //mauritania
                 return R.drawable.mr;
             case "ms": //montserrat
-                // TODO: 12/15/17
-                return R.drawable.mr;
+                return R.drawable.mr;// TODO: 12/15/17
             case "mt": //malta
                 return R.drawable.mt;
             case "mu": //mauritius
@@ -384,8 +384,7 @@ public class Util {
             case "na": //namibia
                 return R.drawable.na;
             case "nc": //new caledonia
-                // TODO: 12/15/17
-                return R.drawable.na;// custom
+                return R.drawable.na;// custom// TODO: 12/15/17
             case "ne": //niger
                 return R.drawable.ne;
             case "ng": //nigeria
@@ -401,8 +400,7 @@ public class Util {
             case "nr": //nauru
                 return R.drawable.nr;
             case "nu": //niue
-                // TODO: 12/15/17
-                return R.drawable.nr;
+                return R.drawable.nr; // TODO: 12/15/17
             case "nz": //new zealand
                 return R.drawable.nz;
             case "om": //oman
@@ -412,8 +410,7 @@ public class Util {
             case "pe": //peru
                 return R.drawable.pe;
             case "pf": //french polynesia
-                // TODO: 12/15/17
-                return R.drawable.pe;
+                return R.drawable.pe;// TODO: 12/15/17
             case "pg": //papua new guinea
                 return R.drawable.pg;
             case "ph": //philippines
@@ -423,17 +420,13 @@ public class Util {
             case "pl": //poland
                 return R.drawable.pl;
             case "pm": //saint pierre and miquelon
-                // TODO: 12/15/17
-                return R.drawable.pl;
+                return R.drawable.pl;// TODO: 12/15/17
             case "pn": //pitcairn
-                // TODO: 12/15/17
-                return R.drawable.pl;
+                return R.drawable.pl;// TODO: 12/15/17
             case "pr": //puerto rico
-                // TODO: 12/15/17
-                return R.drawable.pl;
+                return R.drawable.pl;// TODO: 12/15/17
             case "ps": //palestine
-                // TODO: 12/15/17
-                return R.drawable.pl;
+                return R.drawable.pl; // TODO: 12/15/17
             case "pt": //portugal
                 return R.drawable.pt;
             case "pw": //palau
@@ -443,8 +436,7 @@ public class Util {
             case "qa": //qatar
                 return R.drawable.qa;
             case "re": //la reunion
-                // TODO: 12/15/17
-                return R.drawable.qa; // no exact flag found
+                return R.drawable.qa; // no exact flag found// TODO: 12/15/17
             case "ro": //romania
                 return R.drawable.ro;
             case "rs": //serbia
@@ -482,15 +474,13 @@ public class Util {
             case "sv": //el salvador
                 return R.drawable.sv;
             case "sx": //sint maarten
-                // TODO: 12/15/17
-                return R.drawable.sv;
+                return R.drawable.sv;// TODO: 12/15/17
             case "sy": //syrian arab republic
                 return R.drawable.sy;
             case "sz": //swaziland
                 return R.drawable.sz;
             case "tc": //turks & caicos islands
-                // TODO: 12/15/17 '
-                return R.drawable.sz;
+                return R.drawable.sz;// TODO: 12/15/17 '
             case "td": //chad
                 return R.drawable.td;
             case "tg": //togo
@@ -500,8 +490,7 @@ public class Util {
             case "tj": //tajikistan
                 return R.drawable.tj;
             case "tk": //tokelau
-                // TODO: 12/15/17
-                return R.drawable.flag_transparent; // custom
+                return R.drawable.tj; // custom  // TODO: 12/15/17
             case "tl": //timor-leste
                 return R.drawable.tl;
             case "tm": //turkmenistan
@@ -537,24 +526,21 @@ public class Util {
             case "ve": //venezuela, bolivarian republic of
                 return R.drawable.ve;
             case "vg": //british virgin islands
-                // TODO: 12/15/17
-                return R.drawable.flag_transparent;
+                return R.drawable.flag_transparent;// TODO: 12/15/17
             case "vi": //us virgin islands
-                // TODO: 12/15/17
-                return R.drawable.flag_transparent;
+                return R.drawable.flag_transparent; // TODO: 12/15/17
             case "vn": //vietnam
                 return R.drawable.vn;
             case "vu": //vanuatu
                 return R.drawable.vu;
             case "wf": //wallis and futuna
-                // TODO: 12/15/17
-                return R.drawable.flag_transparent;
+                return R.drawable.flag_transparent;// TODO: 12/15/17
             case "ws": //samoa
                 return R.drawable.ws;
             case "ye": //yemen
                 return R.drawable.ye;
             case "yt": //mayotte
-                return R.drawable.flag_transparent; // no exact flag found
+                return R.drawable.flag_transparent; // TODO: 12/17/17  
             case "za": //south africa
                 return R.drawable.za;
             case "zm": //zambia
