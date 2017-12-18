@@ -28,16 +28,19 @@ class CountryPickerAdapter extends RecyclerView.Adapter<CountryPickerAdapter.Cou
     private final Context context;
     private final List<Country> countries;
     private final TextView tvNoResult;
+    private final boolean showCountryCode;
     private List<Country> filteredCountries;
     private final OnItemClickCallback clickListener;
 
-    public CountryPickerAdapter(Context context, @NonNull OnItemClickCallback callback, List<Country> countries,
-                                RelativeLayout rlQueryHolder, SearchView searchView, TextView tvNoResult) {
+    public CountryPickerAdapter(Context context, @NonNull OnItemClickCallback callback,
+                                List<Country> countries, SearchView searchView, TextView tvNoResult,
+                                boolean showCountryCodeInList) {
         this.context = context;
         this.clickListener = callback;
         this.countries = countries;
         this.filteredCountries = countries;
         this.tvNoResult = tvNoResult;
+        this.showCountryCode = showCountryCodeInList;
 
         //attach a text change listener
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -147,29 +150,9 @@ class CountryPickerAdapter extends RecyclerView.Adapter<CountryPickerAdapter.Cou
             ivFlag = rootView.findViewById(R.id.ivFlag);
             flagWrapper = rootView.findViewById(R.id.flagWrapper);
             divider = rootView.findViewById(R.id.preferenceDivider);
-
-//            if (codePicker.getDialogTextColor() != 0) {
-//                tvName.setTextColor(codePicker.getDialogTextColor());
-//                tvCode.setTextColor(codePicker.getDialogTextColor());
-//                divider.setBackgroundColor(codePicker.getDialogTextColor());
-//            }
-//
-//            try {
-//                if (codePicker.getDialogTypeFace() != null) {
-//                    if (codePicker.getDialogTypeFaceStyle() != CountryCodePicker.DEFAULT_UNSET) {
-//                        tvCode.setTypeface(codePicker.getDialogTypeFace(), codePicker.getDialogTypeFaceStyle());
-//                        tvName.setTypeface(codePicker.getDialogTypeFace(), codePicker.getDialogTypeFaceStyle());
-//                    } else {
-//                        tvCode.setTypeface(codePicker.getDialogTypeFace());
-//                        tvName.setTypeface(codePicker.getDialogTypeFace());
-//                    }
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
         }
 
-        public void setCountry(Country country, int position) {
+        private void setCountry(Country country, int position) {
             if (position == 0) {
                 divider.setVisibility(View.GONE);
             }
@@ -177,16 +160,13 @@ class CountryPickerAdapter extends RecyclerView.Adapter<CountryPickerAdapter.Cou
             if (country != null) {
                 tvName.setVisibility(View.VISIBLE);
                 tvCode.setVisibility(View.VISIBLE);
-
-                // TODO: 12/15/17 Fix
-//                if (codePicker.isCcpDialogShowPhoneCode()) {
-//                    tvCode.setVisibility(View.VISIBLE);
-//                } else {
-//                    tvCode.setVisibility(View.GONE);
-//                }
-
                 flagWrapper.setVisibility(View.VISIBLE);
-                tvName.setText(context.getString(R.string.format_country, country.getName(), country.getCode().toUpperCase()));
+                if (showCountryCode) {
+                    tvName.setText(context.getString(R.string.format_country_with_code, country.getName(), country.getCode().toUpperCase()));
+                } else {
+                    tvName.setText(context.getString(R.string.format_country, country.getName()));
+                }
+
                 tvCode.setText(context.getString(R.string.plus_prefix, country.getDialCode()));
                 ivFlag.setImageResource(Util.getFlagResID(country));
             } else {

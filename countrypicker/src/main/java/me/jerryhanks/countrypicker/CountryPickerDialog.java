@@ -24,7 +24,7 @@ import java.util.List;
 public class CountryPickerDialog {
     private static Dialog INSTANCE = null;
 
-    public static void openPickerDialog(final CountryPicker picker) {
+    public static void openPickerDialog(final CountryPicker picker, boolean showCountryCodeInList) {
         final Context context = picker.getContext();
         Dialog dialog = getDialog(context);
 
@@ -46,29 +46,21 @@ public class CountryPickerDialog {
         //set up dialog views
         //dialog views
         RecyclerView recyclerView = dialog.findViewById(R.id.recycler_countryDialog);
-
-        final TextView textViewTitle = dialog.findViewById(R.id.textView_title);
-
-        RelativeLayout rlQueryHolder = dialog.findViewById(R.id.rl_query_holder);
-
         TextView tvNoResult = dialog.findViewById(R.id.textView_noresult);
-
-        RelativeLayout rlHolder = dialog.findViewById(R.id.rl_holder);
-
-        ImageView imgDismiss = dialog.findViewById(R.id.ivDismiss);
-
+        ImageView ivDismiss = dialog.findViewById(R.id.ivDismiss);
         SearchView searchView = dialog.findViewById(R.id.searchView);
 
 
         //set click listeners
-        imgDismiss.setOnClickListener(v -> dialog.dismiss());
+        ivDismiss.setOnClickListener(v -> dialog.dismiss());
 
         final CountryPickerAdapter.OnItemClickCallback callback = country -> {
             picker.updateCountry(country);
             dialog.dismiss();
         };
 
-        final CountryPickerAdapter cca = new CountryPickerAdapter(context, callback, countries, rlQueryHolder, searchView, tvNoResult);
+        final CountryPickerAdapter cca = new CountryPickerAdapter(context, callback, countries,
+                searchView, tvNoResult, showCountryCodeInList);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(cca);
 

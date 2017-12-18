@@ -43,6 +43,11 @@ public class CountryPicker extends TextInputEditText {
     public static final String EXTRA_SHOW_FAST_SCROLL_HANDLER_COLOR = "me.jerryhanks.countrypicker_EXTRA_SHOW_FAST_HANDLE_COLOR";
     public static final String EXTRA_SHOW_FAST_SCROLL_BUBBLE_TEXT_APPEARANCE = "me.jerryhanks.countrypicker_EXTRA_SHOW_FAST_BUBBLE_TEXT_APPEARANCE";
     private static final String CP_PREF_FILE = "cp_pref_file";
+    public static final String EXTRA_SHOW_COUNTRY_CODE_IN_LIST = "me.jerryhanks.countrypicker_EXTRA_SHOW_COUNTRY_CODE_IN_LIST";
+    private String lastSelectionTag = "last_selection_tag";
+    private String defaultCountryName;
+    private String preferredCountries;
+
     private boolean isRTL;
     private boolean searchAllowed;
     private boolean dialogKeyboardAutoPopup;
@@ -50,17 +55,18 @@ public class CountryPicker extends TextInputEditText {
     private int fastScrollerBubbleColor;
     private int fastScrollerHandleColor;
     private int fastScrollerBubbleTextAppearance;
-    private Country selectedCountry = new Country("Nigeria", "+234", "NG");
-    private BitmapDrawable chip;
-    private String defaultCountryName;
     private boolean autoDetectCountryEnabled;
+    private boolean showFullscreenDialog;
+    private boolean showCountryCodeInView;
+    private boolean showCountryDialCodeInView;
+    private boolean rememberLastSelection;
+    private boolean setCountryCodeBorder;
+    private boolean showCountryCodeInList;
+
     private Language languageToApply = Language.ENGLISH;
     private AutoDetectionPref selectedAutoDetectionPref;
-    private boolean showFullscreenDialog;
-    private boolean showCountryCode;
-    private boolean showCountryDialCode;
-    private String lastSelectionTag = "last_selection_tag";
-    private boolean rememberLastSelection;
+    private Country selectedCountry = new Country("Nigeria", "+234", "NG");
+    private BitmapDrawable chip;
 
     public CountryPicker(Context context) {
         this(context, null);
@@ -82,11 +88,14 @@ public class CountryPicker extends TextInputEditText {
             TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.CountryPicker, defStyleAttr, 0);
             try {
 
-                //show country code: false by default
-                showCountryCode = a.getBoolean(R.styleable.CountryPicker_cp_showCountryCode, false);
+                //show country code in view: false by default
+                showCountryCodeInView = a.getBoolean(R.styleable.CountryPicker_cp_showCountryCodeInView, true);
 
-                //show country dial code : false by default
-                showCountryDialCode = a.getBoolean(R.styleable.CountryPicker_cp_showCountryDialCode, false);
+                //show country code in list: false by default
+                showCountryCodeInList = a.getBoolean(R.styleable.CountryPicker_cp_showCountryCodeInList, true);
+
+                //show country dial code : true by default
+                showCountryDialCodeInView = a.getBoolean(R.styleable.CountryPicker_cp_showCountryDialCodeInView, true);
 
                 //default Country : null/empty by default
                 defaultCountryName = a.getString(R.styleable.CountryPicker_cp_defaultCountryName);
@@ -103,13 +112,13 @@ public class CountryPicker extends TextInputEditText {
                 showFastScroller = a.getBoolean(R.styleable.CountryPicker_cp_showFastScroll, true);
 
                 //bubble color
-                fastScrollerBubbleColor = a.getColor(R.styleable.CountryPicker_fastScrollerBubbleColor, 0);
+                fastScrollerBubbleColor = a.getColor(R.styleable.CountryPicker_cp_fastScrollerBubbleColor, 0);
 
                 //scroller handle color
-                fastScrollerHandleColor = a.getColor(R.styleable.CountryPicker_fastScrollerHandleColor, 0);
+                fastScrollerHandleColor = a.getColor(R.styleable.CountryPicker_cp_fastScrollerHandleColor, 0);
 
                 //scroller text appearance
-                fastScrollerBubbleTextAppearance = a.getResourceId(R.styleable.CountryPicker_fastScrollerBubbleTextAppearance, 0);
+                fastScrollerBubbleTextAppearance = a.getResourceId(R.styleable.CountryPicker_cp_fastScrollerBubbleTextAppearance, 0);
 
                 //allow the user to search : true by default, let the user search all the time
                 //and decide when they do not want search
@@ -125,6 +134,12 @@ public class CountryPicker extends TextInputEditText {
 
                 //auto detect country : default to true, always try to detect the country of the user
                 autoDetectCountryEnabled = a.getBoolean(R.styleable.CountryPicker_cp_autoDetectCountry, true);
+
+                //set the border around country code
+                setCountryCodeBorder = a.getBoolean(R.styleable.CountryPicker_cp_setCountryCodeBorder, false);
+
+                //preferred countries
+                preferredCountries = a.getString(R.styleable.CountryPicker_cp_preferredCountries);
 
             } finally {
                 a.recycle();
@@ -250,17 +265,19 @@ public class CountryPicker extends TextInputEditText {
         tvCode.setTextSize(getTextSize());
         tvCode.setTextColor(getTextColors());
 
-        if (!isShowCountryCode()) {
-            tvCode.setText(getContext().getString(R.string.fmt_dial_code, dialCode));
-        }
-
-        if (!isShowCountryDialCode()) {
+        if (isShowCountryCodeInView()) {
             tvCode.setText(getContext().getString(R.string.fmt_code, code));
         }
 
-        if (isShowCountryDialCode() && isShowCountryCode()) {
+        if (isShowCountryDialCodeInView()) {
+            tvCode.setText(getContext().getString(R.string.fmt_dial_code, dialCode));
+        }
+
+        if (isShowCountryDialCodeInView() && isShowCountryCodeInView()) {
             tvCode.setText(getContext().getString(R.string.fmt_code_and_dial_code, code, dialCode));
-        } else {
+        }
+
+        if (!isShowCountryCodeInView() && !isShowCountryDialCodeInView()) {
             tvCode.setVisibility(View.GONE);
         }
 
@@ -399,20 +416,19 @@ public class CountryPicker extends TextInputEditText {
         // TODO: 12/15/17 Implement rollback to the default country
     }
 
-
     /**
      * This will detect country from SIM info and then load it into CCP.
      *
-     * @param loadDefaultWhenFails true if want to reset to default country when sim country cannot be detected. if false, then it
-     *                             will not change currently selected country
+     * @param resetDefault true if want to reset to default country when sim country cannot be detected. if false, then it
+     *                     will not change currently selected country
      * @return true if it successfully sets country, false otherwise
      */
-    public boolean detectSIMCountry(boolean loadDefaultWhenFails) {
+    public boolean detectSIMCountry(boolean resetDefault) {
         try {
             TelephonyManager telephonyManager = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
             String simCountryISO = telephonyManager.getSimCountryIso();
             if (simCountryISO == null || simCountryISO.isEmpty()) {
-                if (loadDefaultWhenFails) {
+                if (resetDefault) {
                     resetToDefaultCountry();
                 }
                 return false;
@@ -421,7 +437,7 @@ public class CountryPicker extends TextInputEditText {
             return true;
         } catch (Exception e) {
             e.printStackTrace();
-            if (loadDefaultWhenFails) {
+            if (resetDefault) {
                 resetToDefaultCountry();
             }
             return false;
@@ -431,16 +447,16 @@ public class CountryPicker extends TextInputEditText {
     /**
      * This will detect country from NETWORK info and then load it into CCP.
      *
-     * @param loadDefaultWhenFails true if want to reset to default country when network country cannot be detected. if false, then it
-     *                             will not change currently selected country
+     * @param resetDefault true if want to reset to default country when network country cannot be detected. if false, then it
+     *                     will not change currently selected country
      * @return true if it successfully sets country, false otherwise
      */
-    public boolean detectNetworkCountry(boolean loadDefaultWhenFails) {
+    public boolean detectNetworkCountry(boolean resetDefault) {
         try {
             TelephonyManager telephonyManager = (TelephonyManager) getContext().getSystemService(Context.TELEPHONY_SERVICE);
             String networkCountryISO = telephonyManager.getNetworkCountryIso();
             if (networkCountryISO == null || networkCountryISO.isEmpty()) {
-                if (loadDefaultWhenFails) {
+                if (resetDefault) {
                     resetToDefaultCountry();
                 }
                 return false;
@@ -449,7 +465,7 @@ public class CountryPicker extends TextInputEditText {
             return true;
         } catch (Exception e) {
             e.printStackTrace();
-            if (loadDefaultWhenFails) {
+            if (resetDefault) {
                 resetToDefaultCountry();
             }
             return false;
@@ -459,15 +475,15 @@ public class CountryPicker extends TextInputEditText {
     /**
      * This will detect country from LOCALE info and then load it into CCP.
      *
-     * @param loadDefaultWhenFails true if want to reset to default country when locale country cannot be detected. if false, then it
-     *                             will not change currently selected country
+     * @param resetDefault true if want to reset to default country when locale country cannot be detected. if false, then it
+     *                     will not change currently selected country
      * @return true if it successfully sets country, false otherwise
      */
-    public boolean detectLocaleCountry(boolean loadDefaultWhenFails) {
+    public boolean detectLocaleCountry(boolean resetDefault) {
         try {
             String localeCountryISO = getContext().getResources().getConfiguration().locale.getCountry();
             if (localeCountryISO == null || localeCountryISO.isEmpty()) {
-                if (loadDefaultWhenFails) {
+                if (resetDefault) {
                     resetToDefaultCountry();
                 }
                 return false;
@@ -476,17 +492,17 @@ public class CountryPicker extends TextInputEditText {
             return true;
         } catch (Exception e) {
             e.printStackTrace();
-            if (loadDefaultWhenFails) {
+            if (resetDefault) {
                 resetToDefaultCountry();
             }
             return false;
         }
     }
 
-    private Country getCountryForName(Language languageToApply, String contryCode) {
+    private Country getCountryForName(Language languageToApply, String countryCode) {
         List<Country> countries = Util.loadDataFromJson(getContext());
         for (Country country : countries) {
-            if (contryCode.equals(country.getCode()))
+            if (countryCode.equals(country.getCode()))
                 return country;
         }
         return new Country("Nigeria", "+234", "NG");
@@ -509,22 +525,60 @@ public class CountryPicker extends TextInputEditText {
         updateSelectedCountry(this.selectedCountry);
     }
 
-    public boolean isShowCountryCode() {
-        return showCountryCode;
+    public boolean isShowCountryCodeInView() {
+        return showCountryCodeInView;
     }
 
-    public void setShowCountryCode(boolean showCountryCode) {
-        this.showCountryCode = showCountryCode;
+    public void setShowCountryCodeInView(boolean show) {
+        this.showCountryCodeInView = show;
+        updateSelectedCountry(this.selectedCountry);
     }
 
-    public boolean isShowCountryDialCode() {
-        return showCountryDialCode;
+    public boolean isShowCountryDialCodeInView() {
+        return showCountryDialCodeInView;
     }
 
-    public void setShowCountryDialCode(boolean showCountryDialCode) {
-        this.showCountryDialCode = showCountryDialCode;
+    public void setShowCountryDialCodeInView(boolean show) {
+        this.showCountryDialCodeInView = show;
+        updateSelectedCountry(this.selectedCountry);
     }
 
+    public boolean isSetCountryCodeBorder() {
+        return setCountryCodeBorder;
+    }
+
+    public void setSetCountryCodeBorder(boolean setCountryCodeBorder) {
+        this.setCountryCodeBorder = setCountryCodeBorder;
+        updateSelectedCountry(this.selectedCountry);
+    }
+
+    public boolean isShowCountryCodeInList() {
+        return showCountryCodeInList;
+    }
+
+    public void setShowCountryCodeInList(boolean show) {
+        this.showCountryCodeInList = show;
+    }
+
+    public String getPreferredCountries() {
+        return preferredCountries;
+    }
+
+    public void setPreferredCountries(String preferredCountries) {
+        this.preferredCountries = preferredCountries;
+    }
+
+    public void setShowFullscreenDialog(boolean showFullscreenDialog) {
+        this.showFullscreenDialog = showFullscreenDialog;
+    }
+
+    public boolean isShowFullscreenDialog() {
+        return showFullscreenDialog;
+    }
+
+    public void setShowFastScroller(boolean showFastScroller) {
+        this.showFastScroller = showFastScroller;
+    }
 
     public enum Language {
         ENGLISH("en");
@@ -586,12 +640,13 @@ public class CountryPicker extends TextInputEditText {
                 bundle.putInt(EXTRA_SHOW_FAST_SCROLL_BUBBLE_COLOR, fastScrollerBubbleColor);
                 bundle.putInt(EXTRA_SHOW_FAST_SCROLL_HANDLER_COLOR, fastScrollerHandleColor);
                 bundle.putInt(EXTRA_SHOW_FAST_SCROLL_BUBBLE_TEXT_APPEARANCE, fastScrollerBubbleTextAppearance);
+                bundle.putBoolean(EXTRA_SHOW_COUNTRY_CODE_IN_LIST, isShowCountryCodeInList());
                 ((Activity) getContext()).startActivityForResult(intent, PICKER_REQUEST_CODE);
             } catch (ClassCastException e) {
                 e.printStackTrace();
             }
         } else {
-            CountryPickerDialog.openPickerDialog(this);
+            CountryPickerDialog.openPickerDialog(this, isShowCountryCodeInList());
         }
     }
 
@@ -602,7 +657,6 @@ public class CountryPicker extends TextInputEditText {
         updateSelectedCountry(country);
 
     }
-
 
     /**
      * Saves the last selected Country code into Sharedpref

@@ -548,7 +548,7 @@ public class Util {
             case "zw": //zimbabwe
                 return R.drawable.zw;
             default:
-                return R.drawable.flag_transparent;
+                return R.drawable.flag_tp;
         }
     }
 }

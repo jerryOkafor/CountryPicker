@@ -27,9 +27,9 @@ public class CountryPickerActivity extends AppCompatActivity {
     private int fastScrollerBubbleTextAppearance = 0;
     private List<Country> countries;
     private RecyclerView recyclerView;
-    private RelativeLayout rlQueryHolder;
     private TextView tvNoResult;
     private CountryPickerAdapter.OnItemClickCallback callback;
+    private boolean showCountryCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +51,7 @@ public class CountryPickerActivity extends AppCompatActivity {
                 fastScrollerBubbleColor = bundle.getInt(CountryPicker.EXTRA_SHOW_FAST_SCROLL_BUBBLE_COLOR);
                 fastScrollerHandleColor = bundle.getInt(CountryPicker.EXTRA_SHOW_FAST_SCROLL_HANDLER_COLOR);
                 fastScrollerBubbleTextAppearance = bundle.getInt(CountryPicker.EXTRA_SHOW_FAST_SCROLL_BUBBLE_TEXT_APPEARANCE);
+                showCountryCode = bundle.getBoolean(CountryPicker.EXTRA_SHOW_COUNTRY_CODE_IN_LIST);
             }
         }
 
@@ -61,8 +62,6 @@ public class CountryPickerActivity extends AppCompatActivity {
         //set up dialog views
         //dialog views
         recyclerView = findViewById(R.id.recycler_countryDialog);
-
-        rlQueryHolder = findViewById(R.id.rl_query_holder);
 
         tvNoResult = findViewById(R.id.textView_noresult);
 
@@ -116,7 +115,8 @@ public class CountryPickerActivity extends AppCompatActivity {
         menuInflater.inflate(R.menu.picker_dialog, menu);
         // Associate searchable configuration with the SearchView
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        final CountryPickerAdapter cca = new CountryPickerAdapter(this, callback, countries, rlQueryHolder, searchView, tvNoResult);
+        final CountryPickerAdapter cca = new CountryPickerAdapter(this, callback, countries,
+                searchView, tvNoResult, showCountryCode);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(cca);
         return true;

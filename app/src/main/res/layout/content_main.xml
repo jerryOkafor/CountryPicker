@@ -9,6 +9,90 @@
     tools:showIn="@layout/activity_main">
 
 
+    <Switch
+        android:id="@+id/switch1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Show Country code in View"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Switch
+        android:id="@+id/switch2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Show country code in List"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switch1" />
+
+    <Switch
+        android:id="@+id/switch3"
+        android:layout_width="0dp"
+        android:layout_height="29dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Show Dial code in View"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switch2" />
+
+    <Switch
+        android:id="@+id/switch4"
+        android:layout_width="0dp"
+        android:layout_height="25dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Show fullscreen picker"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switch3" />
+
+    <Switch
+        android:id="@+id/switch5"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Show preferred countries section"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switch4" />
+
+    <Switch
+        android:id="@+id/switch6"
+        android:layout_width="0dp"
+        android:layout_height="23dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        android:text="Show ONLY preferred section"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switch5" />
+
+    <Switch
+        android:id="@+id/switch7"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Show fast scroll "
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/switch6" />
+
     <me.jerryhanks.countrypicker.CountryPicker
         android:id="@+id/countryPicker"
         android:layout_width="match_parent"
@@ -16,51 +100,58 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
-        app:cp_rememberLastSelection="true"
-        app:cp_showCountryCode="true"
-        app:cp_showCountryDialCode="true"
         app:cp_autoDetectCountry="false"
-        app:cp_showFastScroll="false"
+        app:cp_fastScrollerBubbleColor="@color/colorPrimary"
+        app:cp_fastScrollerBubbleTextAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:cp_fastScrollerHandleColor="@color/colorAccent"
+        app:cp_rememberLastSelection="true"
+        app:cp_showCountryCodeInView="true"
+        app:cp_showCountryDialCodeInView="true"
+        app:cp_showFastScroll="true"
         app:cp_showFullScreeDialog="true"
-        app:fastScrollerBubbleColor="@color/colorPrimary"
-        app:fastScrollerBubbleTextAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:fastScrollerHandleColor="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@+id/switch7" />
 
-
-    <me.jerryhanks.countrypicker.CountryPicker
-        android:id="@+id/countryPicker1"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
-        app:cp_showCountryCode="true"
-        app:cp_showCountryDialCode="true"
-        app:cp_showFastScroll="false"
-        app:cp_showFullScreeDialog="false"
-        app:fastScrollerBubbleColor="@color/colorPrimary"
-        app:fastScrollerBubbleTextAppearance="@style/TextAppearance.AppCompat.Medium"
-        app:fastScrollerHandleColor="@color/colorAccent"
+        android:text="Result:"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/countryPicker" />
 
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="TextView"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
+
     <Button
         android:id="@+id/button"
-        android:layout_width="114dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/get"
+        android:text="Result"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/countryPicker1"
+        app:layout_constraintTop_toBottomOf="@+id/textView2"
         app:layout_constraintVertical_bias="1.0" />
+
 </android.support.constraint.ConstraintLayout>
