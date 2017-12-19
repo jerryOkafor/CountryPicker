@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.TelephonyManager;
@@ -375,6 +376,7 @@ public class CountryPicker extends TextInputEditText {
         return this.selectedCountry.getDialCode() + phoneNumber;
     }
 
+    @Nullable
     public String getFormattedFullNumber() {
         String formattedFullNumber;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
