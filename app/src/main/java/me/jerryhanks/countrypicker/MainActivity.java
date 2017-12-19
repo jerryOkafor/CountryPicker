@@ -11,6 +11,7 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
+import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
@@ -46,14 +47,15 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         s7.setOnCheckedChangeListener(this);
         s7.setChecked(picker.isShowFastScroller());
 
-
+        //result tv
+        TextView resultTv = findViewById(R.id.tvResult);
         Button button = findViewById(R.id.button);
         button.setOnClickListener(v -> {
             String fullNumber = picker.getFullNumber();
             String fullNumberWithPlus = picker.getFullNumberWithPlus();
             String formattedPhone = picker.getFormattedFullNumber();
 
-            Log.d(TAG, "FullNumber: " + fullNumber + " FullNumberWithPlus " + fullNumberWithPlus + " FullNumberFormatted " + formattedPhone);
+            resultTv.setText(getString(R.string.fmt_result,fullNumber,fullNumberWithPlus,formattedPhone));
         });
     }
 

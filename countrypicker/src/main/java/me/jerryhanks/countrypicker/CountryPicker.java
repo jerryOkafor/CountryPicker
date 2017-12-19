@@ -364,7 +364,15 @@ public class CountryPicker extends TextInputEditText {
     }
 
     public String getFullNumberWithPlus() {
-        return this.selectedCountry.getDialCode() + getText().toString();
+        String phoneNumber;
+        String text = getText().toString();
+        if (text.startsWith("0")) {
+            phoneNumber = text.replaceFirst("0", "");
+        } else {
+            phoneNumber = text;
+        }
+
+        return this.selectedCountry.getDialCode() + phoneNumber;
     }
 
     public String getFormattedFullNumber() {
@@ -657,7 +665,6 @@ public class CountryPicker extends TextInputEditText {
     }
 
     //convenient class to save and restore the view state
-
     protected static class SavedState extends BaseSavedState {
 
         private String countryCode;

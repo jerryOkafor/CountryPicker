@@ -2,4 +2,16 @@
     <string name="app_name">CountryPicker</string>
     <string name="action_settings">Settings</string>
     <string name="get">Get</string>
+    <string name="result">Result</string>
+    <string name="title_result">Result:</string>
+    <string name="show_fast_scroll">Show fast scroll</string>
+    <string name="show_only_preferred_section">Show ONLY preferred section</string>
+    <string name="show_preferred_countries_section">Show preferred countries section</string>
+    <string name="show_country_code_in_view">Show Country code in View</string>
+    <string name="show_country_code_in_list">Show country code in List</string>
+    <string name="show_dial_code_in_view">Show Dial code in View</string>
+    <string name="show_fullscreen_picker">Show fullscreen picker</string>
+    <string name="fmt_result">
+        Full Number        : %s\nFull Num. With +   : %s\nFormatted          : %s
+    </string>
 </resources>
