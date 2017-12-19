@@ -341,10 +341,6 @@ public class CountryPicker extends TextInputEditText {
         return dialogKeyboardAutoPopup;
     }
 
-    public boolean isShowFastScroller() {
-        return showFastScroller;
-    }
-
     public int getFastScrollerBubbleColor() {
         return fastScrollerBubbleColor;
     }
@@ -564,86 +560,41 @@ public class CountryPicker extends TextInputEditText {
         return preferredCountries;
     }
 
-    public void setPreferredCountries(String preferredCountries) {
-        this.preferredCountries = preferredCountries;
+    public void setPreferredCountries(String countries) {
+        this.preferredCountries = countries;
     }
 
-    public void setShowFullscreenDialog(boolean showFullscreenDialog) {
-        this.showFullscreenDialog = showFullscreenDialog;
+    public void setShowFullscreenDialog(boolean show) {
+        this.showFullscreenDialog = show;
     }
 
     public boolean isShowFullscreenDialog() {
         return showFullscreenDialog;
     }
 
-    public void setShowFastScroller(boolean showFastScroller) {
-        this.showFastScroller = showFastScroller;
+    public boolean isShowFastScroller() {
+        return showFastScroller;
     }
 
-    public enum Language {
-        ENGLISH("en");
-
-        String code;
-
-        Language(String code) {
-            this.code = code;
-        }
-
-        public String getCode() {
-            return code;
-        }
-
-        public void setCode(String code) {
-            this.code = code;
-        }
-    }
-
-    public enum AutoDetectionPref {
-        SIM_ONLY("1"), //sim only
-        NETWORK_ONLY("2"), //network only
-        LOCALE_ONLY("3"), //local only
-        SIM_NETWORK("12"), //sim  then network
-        NETWORK_SIM("21"), //network
-        SIM_LOCALE("13"), //sim then local
-        LOCALE_SIM("31"), //local then sim
-        NETWORK_LOCALE("23"), //network then local
-        LOCALE_NETWORK("32"), //local then network
-        SIM_NETWORK_LOCALE("123"), //sim then network then local
-        SIM_LOCALE_NETWORK("132"), //sim then local then network
-        NETWORK_SIM_LOCALE("213"), //network then sim then local
-        NETWORK_LOCALE_SIM("231"), //network the local then sim
-        LOCALE_SIM_NETWORK("312"), //local then sim then network
-        LOCALE_NETWORK_SIM("321"); //local then network then sim
-
-        String representation;
-
-        AutoDetectionPref(String representation) {
-            this.representation = representation;
-        }
-
-        public static AutoDetectionPref getPrefForValue(String value) {
-            for (AutoDetectionPref autoDetectionPref : AutoDetectionPref.values()) {
-                if (autoDetectionPref.representation.equals(value)) {
-                    return autoDetectionPref;
-                }
-            }
-            return SIM_NETWORK_LOCALE;
-        }
+    public void setShowFastScroller(boolean show) {
+        this.showFastScroller = show;
     }
 
     public void launchCountrySelectionDialog() {
-        if (showFullscreenDialog) {
+        if (isShowFullscreenDialog()) {
             try {
                 Intent intent = new Intent(getContext(), CountryPickerActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putBoolean(EXTRA_SHOW_FAST_SCROLL, showFastScroller);
+                bundle.putBoolean(EXTRA_SHOW_FAST_SCROLL, isShowFastScroller());
                 bundle.putInt(EXTRA_SHOW_FAST_SCROLL_BUBBLE_COLOR, fastScrollerBubbleColor);
                 bundle.putInt(EXTRA_SHOW_FAST_SCROLL_HANDLER_COLOR, fastScrollerHandleColor);
                 bundle.putInt(EXTRA_SHOW_FAST_SCROLL_BUBBLE_TEXT_APPEARANCE, fastScrollerBubbleTextAppearance);
                 bundle.putBoolean(EXTRA_SHOW_COUNTRY_CODE_IN_LIST, isShowCountryCodeInList());
+                intent.putExtras(bundle);
                 ((Activity) getContext()).startActivityForResult(intent, PICKER_REQUEST_CODE);
             } catch (ClassCastException e) {
                 e.printStackTrace();
+                CountryPickerDialog.openPickerDialog(this, isShowCountryCodeInList());
             }
         } else {
             CountryPickerDialog.openPickerDialog(this, isShowCountryCodeInList());
@@ -742,5 +693,63 @@ public class CountryPicker extends TextInputEditText {
 
         };
 
+    }
+
+
+    /**
+     * Lis of all the supported languages
+     */
+    public enum Language {
+        ENGLISH("en");
+
+        String code;
+
+        Language(String code) {
+            this.code = code;
+        }
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+    }
+
+    /**
+     * All the supported network detection steps
+     */
+    public enum AutoDetectionPref {
+        SIM_ONLY("1"), //sim only
+        NETWORK_ONLY("2"), //network only
+        LOCALE_ONLY("3"), //local only
+        SIM_NETWORK("12"), //sim  then network
+        NETWORK_SIM("21"), //network
+        SIM_LOCALE("13"), //sim then local
+        LOCALE_SIM("31"), //local then sim
+        NETWORK_LOCALE("23"), //network then local
+        LOCALE_NETWORK("32"), //local then network
+        SIM_NETWORK_LOCALE("123"), //sim then network then local
+        SIM_LOCALE_NETWORK("132"), //sim then local then network
+        NETWORK_SIM_LOCALE("213"), //network then sim then local
+        NETWORK_LOCALE_SIM("231"), //network the local then sim
+        LOCALE_SIM_NETWORK("312"), //local then sim then network
+        LOCALE_NETWORK_SIM("321"); //local then network then sim
+
+        String representation;
+
+        AutoDetectionPref(String representation) {
+            this.representation = representation;
+        }
+
+        public static AutoDetectionPref getPrefForValue(String value) {
+            for (AutoDetectionPref autoDetectionPref : AutoDetectionPref.values()) {
+                if (autoDetectionPref.representation.equals(value)) {
+                    return autoDetectionPref;
+                }
+            }
+            return SIM_NETWORK_LOCALE;
+        }
     }
 }

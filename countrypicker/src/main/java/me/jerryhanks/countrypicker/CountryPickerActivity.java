@@ -8,11 +8,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.futuremind.recyclerviewfastscroll.FastScroller;
@@ -26,16 +26,21 @@ public class CountryPickerActivity extends AppCompatActivity {
     private int fastScrollerHandleColor = 0;
     private int fastScrollerBubbleTextAppearance = 0;
     private List<Country> countries;
-    private RecyclerView recyclerView;
     private TextView tvNoResult;
     private CountryPickerAdapter.OnItemClickCallback callback;
     private boolean showCountryCode;
+    private String TAG = CountryPickerActivity.class.getSimpleName();
+    private RecyclerView recyclerView;
+    private CountryPickerAdapter pickerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "OnCreate called");
         setContentView(R.layout.activity_country_picker);
         Toolbar toolbar = findViewById(R.id.my_toolbar);
+        toolbar.inflateMenu(R.menu.picker_dialog);
+        SearchView searchView = (SearchView) toolbar.getMenu().findItem(R.id.search).getActionView();
 
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -59,13 +64,6 @@ public class CountryPickerActivity extends AppCompatActivity {
         //list all the countries
         countries = Util.loadDataFromJson(this);
 
-        //set up dialog views
-        //dialog views
-        recyclerView = findViewById(R.id.recycler_countryDialog);
-
-        tvNoResult = findViewById(R.id.textView_noresult);
-
-
         callback = country -> {
             //set result and finish
             Intent intent = new Intent();
@@ -75,8 +73,22 @@ public class CountryPickerActivity extends AppCompatActivity {
         };
 
 
+        //recyclerView
+        recyclerView = findViewById(R.id.recyclerCountryPicker);
+
+        //no result tv
+        tvNoResult = findViewById(R.id.tvNoResult);
+
+        //create picker adapter
+        pickerAdapter = new CountryPickerAdapter(this, callback, countries,
+                searchView, tvNoResult, showCountryCode);
+
         //fast scroller
         FastScroller fastScroller = findViewById(R.id.fastScroll);
+
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(pickerAdapter);
+
         fastScroller.setRecyclerView(recyclerView);
         if (isShowFastScroller()) {
             if (getFastScrollerBubbleColor() != 0) {
@@ -99,28 +111,20 @@ public class CountryPickerActivity extends AppCompatActivity {
             fastScroller.setVisibility(View.GONE);
         }
 
-    }
 
-    public boolean isShowFastScroller() {
-        return showFastScroller;
-    }
-
-    public void setShowFastScroller(boolean showFastScroller) {
-        this.showFastScroller = showFastScroller;
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "OnCreate Options menu called");
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.picker_dialog, menu);
         // Associate searchable configuration with the SearchView
         SearchView searchView = (SearchView) menu.findItem(R.id.search).getActionView();
-        final CountryPickerAdapter cca = new CountryPickerAdapter(this, callback, countries,
-                searchView, tvNoResult, showCountryCode);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(cca);
+        pickerAdapter.setSearchView(searchView);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -147,4 +151,7 @@ public class CountryPickerActivity extends AppCompatActivity {
     }
 
 
+    public boolean isShowFastScroller() {
+        return showFastScroller;
+    }
 }

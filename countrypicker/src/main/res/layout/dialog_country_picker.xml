@@ -51,7 +51,8 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:queryHint="@string/search_hint" />
+            android:queryHint="@string/search_hint"
+            app:actionViewClass="android.support.v7.widget.SearchView" />
     </RelativeLayout>
 
     <include

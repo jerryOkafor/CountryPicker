@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.futuremind.recyclerviewfastscroll.FastScroller;
@@ -30,7 +29,7 @@ public class CountryPickerDialog {
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         if (dialog.getWindow() != null)
-            dialog.getWindow().setContentView(R.layout.layout_country_picker);
+            dialog.getWindow().setContentView(R.layout.dialog_country_picker);
 
         //keyboard
         if (picker.isSearchAllowed() && picker.isDialogKeyboardAutoPopup()) {
@@ -45,8 +44,8 @@ public class CountryPickerDialog {
 
         //set up dialog views
         //dialog views
-        RecyclerView recyclerView = dialog.findViewById(R.id.recycler_countryDialog);
-        TextView tvNoResult = dialog.findViewById(R.id.textView_noresult);
+        RecyclerView recyclerView = dialog.findViewById(R.id.recyclerCountryPicker);
+        TextView tvNoResult = dialog.findViewById(R.id.tvNoResult);
         ImageView ivDismiss = dialog.findViewById(R.id.ivDismiss);
         SearchView searchView = dialog.findViewById(R.id.searchView);
 

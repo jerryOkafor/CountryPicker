@@ -29,6 +29,7 @@ class CountryPickerAdapter extends RecyclerView.Adapter<CountryPickerAdapter.Cou
     private final List<Country> countries;
     private final TextView tvNoResult;
     private final boolean showCountryCode;
+    private SearchView searchView;
     private List<Country> filteredCountries;
     private final OnItemClickCallback clickListener;
 
@@ -38,23 +39,13 @@ class CountryPickerAdapter extends RecyclerView.Adapter<CountryPickerAdapter.Cou
         this.context = context;
         this.clickListener = callback;
         this.countries = countries;
+        this.searchView = searchView;
         this.filteredCountries = countries;
         this.tvNoResult = tvNoResult;
         this.showCountryCode = showCountryCodeInList;
 
         //attach a text change listener
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                getFilter().filter(newText);
-                return true;
-            }
-        });
+        addSearchViewListener();
 
 
     }
@@ -133,6 +124,27 @@ class CountryPickerAdapter extends RecyclerView.Adapter<CountryPickerAdapter.Cou
 
     private Country getItem(int position) {
         return filteredCountries.get(position);
+    }
+
+    public void setSearchView(SearchView searchView) {
+        this.searchView = searchView;
+        addSearchViewListener();
+    }
+
+    private void addSearchViewListener() {
+        if (this.searchView != null)
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    getFilter().filter(newText);
+                    return true;
+                }
+            });
     }
 
     class CountryCodeViewHolder extends RecyclerView.ViewHolder {
