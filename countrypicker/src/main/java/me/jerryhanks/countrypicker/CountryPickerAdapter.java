@@ -80,9 +80,16 @@ class CountryPickerAdapter extends RecyclerView.Adapter<CountryPickerAdapter.Cou
                 } else {
                     ArrayList<Country> filteredList = new ArrayList<>();
                     for (Country country : countries) {
-                        if ((country.getName().toLowerCase().startsWith(charString)
-                                || showCountryCode) && country.getCode().toLowerCase().startsWith(charString)) {
+                        if (country.getName().toLowerCase().startsWith(charString)) {
+                            //check for country code
+                            if (showCountryCode && country.getCode().toLowerCase().startsWith(charString)) {
+                                filteredList.add(country);
+                                continue;
+                            }
                             filteredList.add(country);
+                        } else if (showCountryCode && country.getCode().toLowerCase().startsWith(charString)) {
+                            filteredList.add(country);
+
                         }
                     }
                     filteredCountries = filteredList;
