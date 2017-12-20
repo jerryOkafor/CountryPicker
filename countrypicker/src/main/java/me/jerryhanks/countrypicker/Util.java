@@ -3,6 +3,7 @@ package me.jerryhanks.countrypicker;
 import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.RestrictTo;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 
@@ -13,14 +14,20 @@ import com.google.gson.GsonBuilder;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.annotation.ElementType;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jerry Hanks on 12/15/17.
  */
 
 public class Util {
+
+    public static final String AZ_STRING = "abcdefghijklmnopqrstuvwxyz";
 
     /**
      * Loads a list of Country
@@ -39,6 +46,24 @@ public class Util {
 
         Country[] countries = gson.fromJson(jsonString, Country[].class);
         return Arrays.asList(countries);
+    }
+
+
+    public static Map<String, List<Country>> mapList(List<Country> countries) {
+        Map<String, List<Country>> groups = new HashMap<>();
+        char[] chars = AZ_STRING.toCharArray();
+        for (char aChar : chars) {
+            List<Country> group = new ArrayList<>();
+            for (Country country : countries) {
+                if (country.getName().toLowerCase().startsWith(String.valueOf(aChar))) {
+                    group.add(country);
+                }
+            }
+
+            groups.put(String.valueOf(aChar), group);
+        }
+
+        return groups;
     }
 
     /**

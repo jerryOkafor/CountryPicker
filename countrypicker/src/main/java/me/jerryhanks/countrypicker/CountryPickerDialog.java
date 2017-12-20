@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jerry Hanks on 12/14/17.
@@ -42,6 +43,9 @@ public class CountryPickerDialog {
         //list all the countries
         List<Country> countries = Util.loadDataFromJson(context);
 
+        //country Groups
+        Map<String, List<Country>> countryGroup = Util.mapList(countries);
+
         //set up dialog views
         //dialog views
         RecyclerView recyclerView = dialog.findViewById(R.id.recyclerCountryPicker);
@@ -58,7 +62,7 @@ public class CountryPickerDialog {
             dialog.dismiss();
         };
 
-        final CountryPickerAdapter cca = new CountryPickerAdapter(context, callback, countries,
+        final CountryPickerAdapter cca = new CountryPickerAdapter(context, callback, countries, countryGroup,
                 searchView, tvNoResult, showCountryCodeInList);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(cca);

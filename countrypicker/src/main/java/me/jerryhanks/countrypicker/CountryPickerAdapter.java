@@ -2,7 +2,6 @@ package me.jerryhanks.countrypicker;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,33 +13,40 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.afollestad.sectionedrecyclerview.SectionedRecyclerViewAdapter;
+import com.afollestad.sectionedrecyclerview.SectionedViewHolder;
 import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author Jerry Hanks on 12/14/17.
  */
 
-class CountryPickerAdapter extends RecyclerView.Adapter<CountryPickerAdapter.CountryCodeViewHolder>
+class CountryPickerAdapter extends SectionedRecyclerViewAdapter<CountryPickerAdapter.CountryCodeViewHolder>
         implements Filterable, SectionTitleProvider {
     private final Context context;
-    private final List<Country> countries;
+    private final Map<String, List<Country>> countryGroup;
     private final TextView tvNoResult;
     private final boolean showCountryCode;
+    private final List<Country> countries;
     private SearchView searchView;
-    private List<Country> filteredCountries;
+    private Map<String, List<Country>> filteredCountryGroup;
     private final OnItemClickCallback clickListener;
 
-    public CountryPickerAdapter(Context context, @NonNull OnItemClickCallback callback,
-                                List<Country> countries, SearchView searchView, TextView tvNoResult,
+    public CountryPickerAdapter(Context context, @NonNull OnItemClickCallback callback, List<Country> countries,
+                                Map<String, List<Country>> countryGroups, SearchView searchView, TextView tvNoResult,
                                 boolean showCountryCodeInList) {
         this.context = context;
         this.clickListener = callback;
         this.countries = countries;
+        this.countryGroup = countryGroups;
         this.searchView = searchView;
-        this.filteredCountries = countries;
+        this.filteredCountryGroup = countryGroups;
         this.tvNoResult = tvNoResult;
         this.showCountryCode = showCountryCodeInList;
 
@@ -52,22 +58,61 @@ class CountryPickerAdapter extends RecyclerView.Adapter<CountryPickerAdapter.Cou
 
     @Override
     public CountryCodeViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_recycler_country_tile, parent, false);
+        int layoutRes;
+        switch (viewType) {
+            case VIEW_TYPE_ITEM:
+                layoutRes = R.layout.item;
+                break;
+            case VIEW_TYPE_HEADER:
+                layoutRes = R.layout.header;
+                break;
+            default:
+                layoutRes = R.layout.item;
+                break;
+        }
+        View view = LayoutInflater.from(parent.getContext()).inflate(layoutRes, parent, false);
         return new CountryCodeViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(CountryCodeViewHolder holder, int position) {
-        Country country = filteredCountries.get(position);
-        holder.setCountry(country, position);
-        holder.itemView.setOnClickListener(v -> clickListener.onItemClick(country));
+    public int getSectionCount() {
+        return filteredCountryGroup.size();
+    }
+
+    @Override
+    public int getItemCount(int section) {
+        return getItemsForSection(section).size();
+    }
+
+    private List<Country> getItemsForSection(int section) {
+        return filteredCountryGroup.get(String.valueOf(Util.AZ_STRING.charAt(section)));
+    }
+
+    @Override
+    public void onBindHeaderViewHolder(CountryCodeViewHolder holder, int section, boolean expanded) {
+        ((TextView) holder.itemView.findViewById(R.id.tvHeader))
+                .setText(String.valueOf(Util.AZ_STRING.charAt(section)).toUpperCase());
 
     }
 
     @Override
-    public int getItemCount() {
-        return filteredCountries.size();
+    public void onBindFooterViewHolder(CountryCodeViewHolder holder, int section) {
+        //do nothing
     }
+
+    @Override
+    public void onBindViewHolder(CountryCodeViewHolder holder, int section, int relativePosition, int absolutePosition) {
+        Country country = getItemsForSection(section).get(relativePosition);
+        holder.setCountry(country, absolutePosition);
+        holder.itemView.setOnClickListener(v -> clickListener.onItemClick(country));
+
+    }
+
+
+    //    @Override
+//    public int getItemCount() {
+//        return filteredCountryGroup.size();
+//    }
 
     @Override
     public Filter getFilter() {
@@ -76,7 +121,7 @@ class CountryPickerAdapter extends RecyclerView.Adapter<CountryPickerAdapter.Cou
             protected FilterResults performFiltering(CharSequence constraint) {
                 String charString = constraint.toString();
                 if (charString.isEmpty()) {
-                    filteredCountries = countries;
+                    filteredCountryGroup = countryGroup;
                 } else {
                     ArrayList<Country> filteredList = new ArrayList<>();
                     for (Country country : countries) {
@@ -92,21 +137,21 @@ class CountryPickerAdapter extends RecyclerView.Adapter<CountryPickerAdapter.Cou
 
                         }
                     }
-                    filteredCountries = filteredList;
+                    filteredCountryGroup = Util.mapList(filteredList);
 
                 }
 
                 FilterResults results = new FilterResults();
-                results.values = filteredCountries;
+                results.values = filteredCountryGroup;
                 return results;
             }
 
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
-                filteredCountries = (List<Country>) results.values;
+                filteredCountryGroup = (Map<String, List<Country>>) results.values;
                 notifyDataSetChanged();
 
-                if (filteredCountries.isEmpty()) {
+                if (filteredCountryGroup.isEmpty()) {
                     tvNoResult.setVisibility(View.VISIBLE);
                 } else {
                     tvNoResult.setVisibility(View.GONE);
@@ -117,7 +162,11 @@ class CountryPickerAdapter extends RecyclerView.Adapter<CountryPickerAdapter.Cou
 
     @Override
     public String getSectionTitle(int position) {
-        Country country = getItem(position);
+        List<Country> c = new ArrayList<>();
+        for (List<Country> countryList : filteredCountryGroup.values()) {
+            c.addAll(countryList);
+        }
+        Country country = c.get(position);
 //        if (preferredCountriesCount > position) {
 //            return "★";
 //        } else
@@ -128,9 +177,6 @@ class CountryPickerAdapter extends RecyclerView.Adapter<CountryPickerAdapter.Cou
         }
     }
 
-    private Country getItem(int position) {
-        return filteredCountries.get(position);
-    }
 
     public void setSearchView(SearchView searchView) {
         this.searchView = searchView;
@@ -153,7 +199,7 @@ class CountryPickerAdapter extends RecyclerView.Adapter<CountryPickerAdapter.Cou
             });
     }
 
-    class CountryCodeViewHolder extends RecyclerView.ViewHolder {
+    class CountryCodeViewHolder extends SectionedViewHolder {
         RelativeLayout rootView;
         TextView tvName, tvCode;
         ImageView ivFlag;

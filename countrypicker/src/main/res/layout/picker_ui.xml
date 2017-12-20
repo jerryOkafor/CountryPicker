@@ -9,7 +9,6 @@
         android:id="@+id/recyclerCountryPicker"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="@dimen/dp_8"
         android:dividerHeight="1dp" />
 
     <com.futuremind.recyclerviewfastscroll.FastScroller

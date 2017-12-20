@@ -109,6 +109,7 @@
         app:cp_showCountryDialCodeInView="true"
         app:cp_showFastScroll="true"
         app:cp_showFullScreeDialog="true"
+        app:cp_preferredCountries="ng,dz,au,az"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

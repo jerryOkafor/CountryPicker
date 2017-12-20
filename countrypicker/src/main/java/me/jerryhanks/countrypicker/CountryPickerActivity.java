@@ -18,6 +18,7 @@ import android.widget.TextView;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
 
 import java.util.List;
+import java.util.Map;
 
 public class CountryPickerActivity extends AppCompatActivity {
 
@@ -64,6 +65,8 @@ public class CountryPickerActivity extends AppCompatActivity {
         //list all the countries
         countries = Util.loadDataFromJson(this);
 
+        //country Groups
+        Map<String, List<Country>> countryGroup = Util.mapList(countries);
         callback = country -> {
             //set result and finish
             Intent intent = new Intent();
@@ -80,7 +83,7 @@ public class CountryPickerActivity extends AppCompatActivity {
         tvNoResult = findViewById(R.id.tvNoResult);
 
         //create picker adapter
-        pickerAdapter = new CountryPickerAdapter(this, callback, countries,
+        pickerAdapter = new CountryPickerAdapter(this, callback, countries, countryGroup,
                 searchView, tvNoResult, showCountryCode);
 
         //fast scroller

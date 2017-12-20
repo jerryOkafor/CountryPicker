@@ -13,6 +13,16 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
     private String TAG = MainActivity.class.getSimpleName();
@@ -55,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
             String fullNumberWithPlus = picker.getFullNumberWithPlus();
             String formattedPhone = picker.getFormattedFullNumber();
 
-            resultTv.setText(getString(R.string.fmt_result,fullNumber,fullNumberWithPlus,formattedPhone));
+            resultTv.setText(getString(R.string.fmt_result, fullNumber, fullNumberWithPlus, formattedPhone));
         });
     }
 
