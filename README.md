@@ -10,7 +10,10 @@ Android Timeline View Library demonstrate the the power of ConstraintnLayout and
 
 ## Showcase
 
-<img src="sc/sc1.png" alt="ExampleMain" width="240">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="showcase/showcase1.png" alt="" width="240">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="showcase/showcase2.png" alt="" width="240">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="showcase/showcase3.png" alt="" width="240">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 
 
 ## Quick Setup
