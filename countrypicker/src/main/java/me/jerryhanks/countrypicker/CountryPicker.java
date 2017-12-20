@@ -16,6 +16,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
+import android.support.v4.content.ContextCompat;
 import android.telephony.PhoneNumberUtils;
 import android.telephony.TelephonyManager;
 import android.text.InputType;
@@ -290,6 +291,10 @@ public class CountryPicker extends TextInputEditText {
         wrapper.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
                 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
         wrapper.layout(0, 0, wrapper.getMeasuredWidth(), wrapper.getMeasuredHeight());
+
+        if (isSetCountryCodeBorder()) {
+            wrapper.setBackgroundResource(R.drawable.picker_chip_bg);
+        }
 
         wrapper.setDrawingCacheEnabled(true);
         Bitmap bitmap = null;
