@@ -167,7 +167,16 @@ class CountryPickerAdapter extends SectionedRecyclerViewAdapter<CountryPickerAda
         for (List<Country> countryList : filteredCountryGroup.values()) {
             c.addAll(countryList);
         }
-        Country country = c.get(position);
+
+        //wrap this is a try and catch due to the
+        //section recycler view
+        Country country = null;
+        try {
+            country = c.get(position);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
 //        if (preferredCountriesCount > position) {
 //            return "★";
 //        } else

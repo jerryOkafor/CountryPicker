@@ -5,12 +5,16 @@
     android:layout_height="wrap_content"
     android:drawingCacheQuality="high"
     android:orientation="horizontal"
-    android:padding="@dimen/dp_8">
+    android:paddingBottom="@dimen/dp_8"
+    android:paddingLeft="@dimen/dp_8"
+    android:paddingRight="@dimen/dp_5"
+    android:paddingStart="@dimen/dp_8"
+    android:paddingTop="@dimen/dp_8">
 
     <ImageView
         android:id="@+id/ivFlag"
-        android:layout_width="58dp"
-        android:layout_height="36dp"
+        android:layout_width="40dp"
+        android:layout_height="25dp"
         android:layout_gravity="start|center_vertical"
         android:scaleType="centerCrop"
         app:srcCompat="@drawable/af" />
