@@ -291,13 +291,15 @@ public class CountryPicker extends TextInputEditText {
                 MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
         wrapper.layout(0, 0, wrapper.getMeasuredWidth(), wrapper.getMeasuredHeight());
 
-        final Bitmap clusterBitmap = Bitmap.createBitmap(wrapper.getMeasuredWidth(),
-                wrapper.getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        wrapper.setDrawingCacheEnabled(true);
+        Bitmap bitmap = null;
+        try {
+            bitmap = wrapper.getDrawingCache(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        Canvas canvas = new Canvas(clusterBitmap);
-        wrapper.draw(canvas);
-
-        return new BitmapDrawable(clusterBitmap);
+        return new BitmapDrawable(bitmap);
     }
 
     @Override
