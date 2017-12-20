@@ -36,7 +36,7 @@
     <Switch
         android:id="@+id/switch3"
         android:layout_width="0dp"
-        android:layout_height="29dp"
+        android:layout_height="25dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
@@ -55,31 +55,31 @@
         android:text="@string/show_fullscreen_picker"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switch3" />
+        app:layout_constraintTop_toBottomOf="@+id/switch7" />
 
-    <Switch
-        android:id="@+id/switch5"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/show_preferred_countries_section"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switch4" />
+    <!--<Switch-->
+        <!--android:id="@+id/switch5"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--android:layout_marginTop="16dp"-->
+        <!--android:text="@string/show_preferred_countries_section"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/switch4" />-->
 
-    <Switch
-        android:id="@+id/switch6"
-        android:layout_width="0dp"
-        android:layout_height="23dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/show_only_preferred_section"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switch5" />
+    <!--<Switch-->
+        <!--android:id="@+id/switch6"-->
+        <!--android:layout_width="0dp"-->
+        <!--android:layout_height="23dp"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--android:layout_marginTop="16dp"-->
+        <!--android:text="@string/show_only_preferred_section"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/switch5" />-->
 
     <Switch
         android:id="@+id/switch7"
@@ -87,11 +87,11 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
         android:text="@string/show_fast_scroll"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switch6" />
+        app:layout_constraintTop_toBottomOf="@+id/switch3" />
 
     <me.jerryhanks.countrypicker.CountryPicker
         android:id="@+id/countryPicker"
@@ -99,7 +99,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="136dp"
         app:cp_autoDetectCountry="false"
         app:cp_fastScrollerBubbleColor="@color/colorPrimary"
         app:cp_fastScrollerBubbleTextAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -114,7 +114,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/switch7" />
+        app:layout_constraintTop_toBottomOf="@+id/switch4" />
 
     <TextView
         android:id="@+id/textView"
