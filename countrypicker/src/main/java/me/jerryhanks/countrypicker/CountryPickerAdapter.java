@@ -127,15 +127,16 @@ class CountryPickerAdapter extends SectionedRecyclerViewAdapter<CountryPickerAda
                     for (Country country : countries) {
                         if (country.getName().toLowerCase().startsWith(charString)) {
                             //check for country code
-                            if (showCountryCode && country.getCode().toLowerCase().startsWith(charString)) {
-                                filteredList.add(country);
-                                continue;
-                            }
+//                            if (showCountryCode && country.getCode().toLowerCase().startsWith(charString)) {
+//                                filteredList.add(country);
+//                                continue;
+//                            }
                             filteredList.add(country);
-                        } else if (showCountryCode && country.getCode().toLowerCase().startsWith(charString)) {
-                            filteredList.add(country);
-
                         }
+//                        else if (showCountryCode && country.getCode().toLowerCase().startsWith(charString)) {
+//                            filteredList.add(country);
+
+//                        }
                     }
                     filteredCountryGroup = Util.mapList(filteredList);
 
