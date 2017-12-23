@@ -24,8 +24,11 @@ import java.util.Map;
 public class CountryPickerDialog {
     private static Dialog INSTANCE = null;
 
-    public static void openPickerDialog(final CountryPicker picker, boolean showCountryCodeInList) {
-        final Context context = picker.getContext();
+    public static void openPickerDialog(Context context,
+                                        final OnCountrySelectedCallback callback,
+                                        boolean showCountryCodeInList,
+                                        boolean isSearchAllowed,
+                                        boolean isDialogKeyboardAutoPopup, boolean isShowFastScroller, int fastScrollerBubbleColor, int fastScrollerHandleColor, int fastScrollerBubbleTextAppearance) {
         Dialog dialog = getDialog(context);
 
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -33,7 +36,7 @@ public class CountryPickerDialog {
             dialog.getWindow().setContentView(R.layout.dialog_country_picker);
 
         //keyboard
-        if (picker.isSearchAllowed() && picker.isDialogKeyboardAutoPopup()) {
+        if (isSearchAllowed && isDialogKeyboardAutoPopup) {
             dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         } else {
             dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -57,12 +60,13 @@ public class CountryPickerDialog {
         //set click listeners
         ivDismiss.setOnClickListener(v -> dialog.dismiss());
 
-        final CountryPickerAdapter.OnItemClickCallback callback = country -> {
-            picker.updateCountry(country);
+        final CountryPickerAdapter.OnItemClickCallback listener = country -> {
+            if (callback != null)
+                callback.updateCountry(country);
             dialog.dismiss();
         };
 
-        final CountryPickerAdapter cca = new CountryPickerAdapter(context, callback, countries, countryGroup,
+        final CountryPickerAdapter cca = new CountryPickerAdapter(context, listener, countries, countryGroup,
                 searchView, tvNoResult, showCountryCodeInList);
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(cca);
@@ -70,18 +74,18 @@ public class CountryPickerDialog {
         //fast scroller
         FastScroller fastScroller = dialog.findViewById(R.id.fastScroll);
         fastScroller.setRecyclerView(recyclerView);
-        if (picker.isShowFastScroller()) {
-            if (picker.getFastScrollerBubbleColor() != 0) {
-                fastScroller.setBubbleColor(picker.getFastScrollerBubbleColor());
+        if (isShowFastScroller) {
+            if (fastScrollerBubbleColor != 0) {
+                fastScroller.setBubbleColor(fastScrollerBubbleColor);
             }
 
-            if (picker.getFastScrollerHandleColor() != 0) {
-                fastScroller.setHandleColor(picker.getFastScrollerHandleColor());
+            if (fastScrollerHandleColor != 0) {
+                fastScroller.setHandleColor(fastScrollerHandleColor);
             }
 
-            if (picker.getFastScrollerBubbleTextAppearance() != 0) {
+            if (fastScrollerBubbleTextAppearance != 0) {
                 try {
-                    fastScroller.setBubbleTextAppearance(picker.getFastScrollerBubbleTextAppearance());
+                    fastScroller.setBubbleTextAppearance(fastScrollerBubbleTextAppearance);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -104,4 +108,7 @@ public class CountryPickerDialog {
     }
 
 
+    public interface OnCountrySelectedCallback {
+        void updateCountry(Country country);
+    }
 }

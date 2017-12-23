@@ -26,12 +26,8 @@ public class CountryPickerActivity extends AppCompatActivity {
     private int fastScrollerBubbleColor = 0;
     private int fastScrollerHandleColor = 0;
     private int fastScrollerBubbleTextAppearance = 0;
-    private List<Country> countries;
-    private TextView tvNoResult;
-    private CountryPickerAdapter.OnItemClickCallback callback;
     private boolean showCountryCode;
     private String TAG = CountryPickerActivity.class.getSimpleName();
-    private RecyclerView recyclerView;
     private CountryPickerAdapter pickerAdapter;
 
     @Override
@@ -63,11 +59,11 @@ public class CountryPickerActivity extends AppCompatActivity {
 
 
         //list all the countries
-        countries = Util.loadDataFromJson(this);
+        List<Country> countries = Util.loadDataFromJson(this);
 
         //country Groups
         Map<String, List<Country>> countryGroup = Util.mapList(countries);
-        callback = country -> {
+        CountryPickerAdapter.OnItemClickCallback callback = country -> {
             //set result and finish
             Intent intent = new Intent();
             intent.putExtra(CountryPicker.EXTRA_COUNTRY, country);
@@ -77,10 +73,10 @@ public class CountryPickerActivity extends AppCompatActivity {
 
 
         //recyclerView
-        recyclerView = findViewById(R.id.recyclerCountryPicker);
+        RecyclerView recyclerView = findViewById(R.id.recyclerCountryPicker);
 
         //no result tv
-        tvNoResult = findViewById(R.id.tvNoResult);
+        TextView tvNoResult = findViewById(R.id.tvNoResult);
 
         //create picker adapter
         pickerAdapter = new CountryPickerAdapter(this, callback, countries, countryGroup,

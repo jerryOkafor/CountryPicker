@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="CountryPicker">
+    <declare-styleable name="PhoneNumberEditText">
         <attr name="cp_defaultCountryName" format="string" />
         <attr name="cp_preferredCountries" format="string" />
 

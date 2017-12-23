@@ -1,8 +1,8 @@
-# TimeLineView 
-Android Timeline View Library demonstrate the the power of ConstraintnLayout and RecyclerView.
+# CountryPicker 
+CountryPicker is a library that consist of a PhoneNumberEditText and a standalone Picker for countries. PhoneNumberEditText offers and EditText for smooth selection of any Countries dial code and other intesting features.
 
 
-
+[![Build Status](https://travis-ci.org/po10cio/Android-Kotlin-Boilerplate.svg?branch=master)](https://travis-ci.org/po10cio/Android-Kotlin-Boilerplate)
 [![](https://jitpack.io/v/po10cio/TimeLineView.svg)](https://jitpack.io/#po10cio/TimeLineView)
 [![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-TimeLineView-green.svg?style=flat )]( https://android-arsenal.com/details/1/6540 )
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://github.com/po10cio/TimeLineView/blob/master/LICENSE.md) 
@@ -36,7 +36,7 @@ Then add the following line
 
 ``` gradle
 dependencies {
-  compile 'com.github.po10cio:TimeLineView:1.0.0'
+  compile 'com.github.po10cio:CountryPicker:1.0.0'
 }
 ```
 
@@ -57,7 +57,7 @@ Then add the dependency
 ``` maven
 <dependency>
   <groupId>com.github.po10cio</groupId>
-  <artifactId>TimeLineView</artifactId>
+  <artifactId>CountryPicker</artifactId>
   <version>1.0.0</version>
 </dependency>
 ```
@@ -66,111 +66,52 @@ Then add the dependency
 In your XML layout include the TimelineView as follows:
 
 ```xml
-<me.jerryhanks.stepview.TimeLineView
-  android:id="@+id/timelineView"
-  android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  android:layout_marginBottom="8dp"
-  android:layout_marginLeft="8dp"
-  android:layout_marginRight="8dp"
-  android:layout_marginTop="16dp">
+<me.jerryhanks.countrypicker.PhoneNumberEditText
+        android:id="@+id/countryPicker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="58dp"
+        android:hint="08030720816"
+        app:cp_autoDetectCountry="false"
+        app:cp_fastScrollerBubbleColor="@color/colorPrimary"
+        app:cp_fastScrollerBubbleTextAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:cp_fastScrollerHandleColor="@color/colorAccent"
+        app:cp_preferredCountries="ng,dz,au,az"
+        app:cp_rememberLastSelection="true"
+        app:cp_setCountryCodeBorder="true"
+        app:cp_showCountryCodeInView="true"
+        app:cp_showCountryDialCodeInView="true"
+        app:cp_showFastScroll="true"
+        app:cp_showFullScreeDialog="true" />
       
 ```
-Then in your Kotlin code, do the following:
- 
- **Create a class that extends TimeLine**
- 
-```kotlin
-class MyTimeLine(status: Status, var title: String?, var content: String?) : TimeLine(status) {
-  override fun equals(other: Any?): Boolean {
-    if (this === other) return true
-    if (javaClass != other?.javaClass) return false
-        other as MyTimeLine
-    
-    if (title != other.title) return false
-    if (content != other.content) return false
+## XML Attributes
 
-    return true
-  }
-  
-  override fun hashCode(): Int {
-    var result = if (title != null) title!!.hashCode() else 0
-    result = 31 * result + if (content != null) content!!.hashCode() else 0
-    
-    return result
-  }
+List of xml attribues that are available in PhoneNumberEdittext
 
-  override fun toString(): String {
-    return "MyTimeLine{" +
-      "title='" + title + '\'' +
-      ", content='" + content + '\'' +
-      '}'
-  }
-}
-```
-  
-  
-TimeLine has three Statuses:
+| XML Attribute | Description   | Default |
+| ------------- |---------------|---------| 
+| cp_autoDetectCountry      | Enables auto detection of the country the device is currently being used | true|
+|cp_searchAllowed||
+|cp_showFastScroll||
+|cp_dialogKeyboardAutoPopup||
+|cp_showFullScreeDialog||
+|cp_showCountryCodeInView||
+|cp_showCountryCodeInList||
+|cp_showCountryDialCodeInView||
+|cp_showCountryDialCodeInList||
+|cp_setCountryCodeBorder||
+|cp_defaultCountryName||
+|cp_preferredCountries||
+|cp_fastScrollerBubbleColor| Sets the color of the fast scroller bubble color| #5e64ce
+|cp_fastScrollerBubbleTextAppearance|Sets the testAppearance of the fastScroller| TextAppearance.AppCompat.Medium|
+|cp_fastScrollerHandleColor|Sets the fastscroller handle color| #8f93d1
 
-- Status.COMPLETED
-- Status.UN_COMPLETED
-- Status.ATTENTION
 
-You can choose from any of the statuses depending on the status of the item you want to represent.
 
-**Create an Array of your TimeLine**
 
-```kotlin
- val timeLines = mutableListOf<MyTimeLine>()
-  .apply {
-    add(MyTimeLine(Status.COMPLETED, getString(R.string.s_title_1), getString(R.string.s_content_1)))
-    add(MyTimeLine(Status.COMPLETED, getString(R.string.s_title_2), getString(R.string.s_content_2)))
-    add(MyTimeLine(Status.COMPLETED, getString(R.string.s_title_3), getString(R.string.s_content_3)))
-    add(MyTimeLine(Status.COMPLETED, getString(R.string.s_title_4), getString(R.string.s_content_4)))
-    add(MyTimeLine(Status.COMPLETED, getString(R.string.s_title_5), getString(R.string.s_content_5)))
-    add(MyTimeLine(Status.COMPLETED, getString(R.string.s_title_6), getString(R.string.s_content_6)))
-    add(MyTimeLine(Status.COMPLETED, getString(R.string.s_title_7), getString(R.string.s_content_7)))
-  }
-```
-
-**Create the IndicatorAdapter and add it to the TimeLineView**
-
-```kotlin
-  val adapter = IndicatorAdapter(mutableListOf(), this, object : TimeLineViewCallback<MyTimeLine> {
-    override fun onBindView(model: MyTimeLine, container: FrameLayout, position: Int): View {
-      val view = layoutInflater
-        .inflate(R.layout.sample_time_line,
-        container, false)
-       
-      (view.findViewById<TextView>(R.id.tv_title)).text = model.title
-      (view.findViewById<TextView>(R.id.tv_content)).text = model.content
-     
-      return view
-    }
-  })
-
-  timelineView.setIndicatorAdapter(adapter)
-  adapter.swapItems(timeLines)
-```
-
-**IndicatorAdapter**
-This extends RecyclerView.Adapter and exposes the following functions:
-
-- Swaps the old items with the new items
-```kotlin
-  fun swapItems(timeLines: List<T>)
-```
-
-- Update a single item given the index
-```kotlin
-  fun updateItem(timeline: T, position: Int) 
-```
-
-- Adds a list of items to the list
-```kotlin
-  fun addItems(vararg items: T)
-```
-	
 ## Changelog
 
 See the [changelog](/CHANGELOG.md) file.

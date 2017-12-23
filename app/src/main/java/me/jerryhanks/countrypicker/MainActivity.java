@@ -5,28 +5,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collectors;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
     private String TAG = MainActivity.class.getSimpleName();
-    private CountryPicker picker;
+    private PhoneNumberEditText picker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +57,19 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
             resultTv.setText(getString(R.string.fmt_result, fullNumber, fullNumberWithPlus, formattedPhone));
         });
+
+        Button dialogPicker = findViewById(R.id.button2);
+        dialogPicker.setOnClickListener(v -> {
+            CountryPicker.showDialogPicker(this, country ->
+                            Toast.makeText(MainActivity.this, country.toString(), Toast.LENGTH_LONG).show(), true,
+                    0, 0, 0,
+                    true, true, true, true);
+        });
+
+        Button fullscreenPicker = findViewById(R.id.button3);
+        fullscreenPicker.setOnClickListener(v ->
+                CountryPicker.showFullScreenPicker(this, true, 0,
+                        0, 0, true));
     }
 
     @Override
@@ -96,6 +99,10 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         if (requestCode == CountryPicker.PICKER_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_OK)
                 picker.handleActivityResult(data);
+            if (data!=null){
+                Country country = data.getParcelableExtra(CountryPicker.EXTRA_COUNTRY);
+                Toast.makeText(this, country.toString(), Toast.LENGTH_LONG).show();
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
