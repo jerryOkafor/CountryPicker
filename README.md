@@ -2,6 +2,7 @@
 CountryPicker is a library that consist of a PhoneNumberEditText and a standalone Picker for countries. PhoneNumberEditText offers and EditText for smooth selection of any Countries dial code and other intesting features.
 
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/6feafc81bc7e460f9f514e2b6c578adc)](https://www.codacy.com/app/po10cio/CountryPicker?utm_source=github.com&utm_medium=referral&utm_content=po10cio/CountryPicker&utm_campaign=badger)
 [![Build Status](https://travis-ci.org/po10cio/Android-Kotlin-Boilerplate.svg?branch=master)](https://travis-ci.org/po10cio/Android-Kotlin-Boilerplate)
 [![](https://jitpack.io/v/po10cio/TimeLineView.svg)](https://jitpack.io/#po10cio/TimeLineView)
 [![Android Arsenal]( https://img.shields.io/badge/Android%20Arsenal-TimeLineView-green.svg?style=flat )]( https://android-arsenal.com/details/1/6540 )
