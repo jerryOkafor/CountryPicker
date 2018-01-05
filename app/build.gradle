@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion compiled_sdk_version
     defaultConfig {
-        applicationId "me.jerryhanks.demo"
+        applicationId "me.jerryhanks.countrypickerdemo"
         minSdkVersion min_sdk_version
         targetSdkVersion target_sdk_version
         versionCode 1

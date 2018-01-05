@@ -38,7 +38,7 @@
         android:layout_marginLeft="1dp"
         android:layout_marginStart="1dp"
         android:gravity="center_vertical|start"
-        android:text="(NG) +234"
+        android:text="@string/ng_234_sample_text"
         android:textColor="#FF000000"
         android:textStyle="bold" />
 </LinearLayout>

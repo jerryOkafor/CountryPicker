@@ -11,4 +11,5 @@
     <string name="fmt_dial_code">%s</string>
     <string name="fmt_code">(%s)</string>
     <string name="search_title">Search a country</string>
+    <string name="ng_234_sample_text">(NG) +234</string>
 </resources>

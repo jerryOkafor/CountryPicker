@@ -92,22 +92,28 @@ In your XML layout include the TimelineView as follows:
 List of xml attribues that are available in PhoneNumberEdittext
 
 | XML Attribute | Description   | Default |
-| ------------- |---------------|---------| 
+| ------------- |:---------------:|:---------:| 
 | cp_autoDetectCountry      | Enables auto detection of the country the device is currently being used | true|
-|cp_searchAllowed||
-|cp_showFastScroll||
-|cp_dialogKeyboardAutoPopup||
-|cp_showFullScreeDialog||
-|cp_showCountryCodeInView||
-|cp_showCountryCodeInList||
-|cp_showCountryDialCodeInView||
-|cp_showCountryDialCodeInList||
-|cp_setCountryCodeBorder||
-|cp_defaultCountryName||
-|cp_preferredCountries||
+|cp_searchAllowed|Enables search functionality in the CountryPicker.|true
+|cp_showFastScroll|Determines whether the Fastscroller button is show or not.|true
+|cp_dialogKeyboardAutoPopup|Use this to toggle Kwyboard auto popup for  CountryPicker in dialog mode. |true
+|cp_showFullScreeDialog|Use this to switch between Dialog and full screen Pickers| false
+|cp_showCountryCodeInView|Dtermins whether the country code is shown in the EditText|true
+|cp_showCountryCodeInList|Determins whether the Country Code is shown in the picker list.|true
+|cp_showCountryDialCodeInView|Determind if the Country Dial code is shown in the view.|true
+|cp_showCountryDialCodeInList|Dtermins if the Country Code is show in the picker lsit.|true
+|cp_setCountryCodeBorder|Determins whether a fancy border is shown around the Picker view.|false
+|cp_defaultCountryName|Use this to specify the dafult country you want to show in the PickerView|Empty
+|cp_preferredCountries|Use this to enter comma seperated list of prefferd countries.|Empty
 |cp_fastScrollerBubbleColor| Sets the color of the fast scroller bubble color| #5e64ce
 |cp_fastScrollerBubbleTextAppearance|Sets the testAppearance of the fastScroller| TextAppearance.AppCompat.Medium|
 |cp_fastScrollerHandleColor|Sets the fastscroller handle color| #8f93d1
+
+## Dependencies
+
+[Recycler Fast scroller](https://github.com/FutureMind/recycler-fast-scroll) by [FutureMind](https://github.com/FutureMind)
+
+[Android Port of libPhonenumber](https://github.com/MichaelRocks/libphonenumber-android) by [Michael Rozumyanskiy](https://github.com/MichaelRocks)
 
 
 
