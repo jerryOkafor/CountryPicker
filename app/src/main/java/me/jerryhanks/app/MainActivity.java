@@ -1,5 +1,6 @@
 package me.jerryhanks.app;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -10,7 +11,10 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import me.jerryhanks.countrypicker.Country;
+import me.jerryhanks.countrypicker.CountryPicker;
 import me.jerryhanks.countrypicker.PhoneNumberEditText;
 
 public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
@@ -21,7 +25,7 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(me.jerryhanks.countrypicker.R.id.my_toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 //
         picker = findViewById(R.id.countryPicker);
@@ -95,16 +99,16 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        if (requestCode == CountryPicker.PICKER_REQUEST_CODE) {
-//            if (resultCode == Activity.RESULT_OK)
-//                picker.handleActivityResult(data);
-//            if (data != null) {
-//                Country country = data.getParcelableExtra(CountryPicker.EXTRA_COUNTRY);
-//                Toast.makeText(this, country.toString(), Toast.LENGTH_LONG).show();
-//            }
-//        } else {
-        super.onActivityResult(requestCode, resultCode, data);
-//        }
+        if (requestCode == CountryPicker.PICKER_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK)
+                picker.handleActivityResult(data);
+            if (data != null) {
+                Country country = data.getParcelableExtra(CountryPicker.EXTRA_COUNTRY);
+                Toast.makeText(this, country.toString(), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
     }
 
 
