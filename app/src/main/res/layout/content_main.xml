@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="me.jerryhanks.countrypicker.MainActivity"
+    tools:context="me.jerryhanks.app.MainActivity"
     tools:showIn="@layout/activity_main">
 
 
@@ -102,8 +102,7 @@
         android:layout_marginTop="16dp"
         android:text="@string/title_result"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/countryPicker" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
         android:id="@+id/tvResult"
@@ -143,12 +142,12 @@
             android:layout_weight="1"
             android:text="@string/format_number" />
 
-        <me.jerryhanks.countrypicker.CountryPickerView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/dp_8"
-            android:layout_weight="1"
-            android:hint="@string/hint" />
+        <!--<me.jerryhanks.countrypicker.CountryPickerView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_margin="@dimen/dp_8"-->
+        <!--android:layout_weight="1"-->
+        <!--android:hint="@string/hint" />-->
 
 
     </LinearLayout>

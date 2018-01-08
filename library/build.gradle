@@ -7,12 +7,17 @@ android {
         targetSdkVersion target_sdk_version
         versionCode 1
         versionName "1.0"
-        vectorDrawables.useSupportLibrary = true
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        vectorDrawables.useSupportLibrary = true
 
     }
 
     buildTypes {
+        debug {
+            testCoverageEnabled true
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -23,6 +28,7 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
 }
 
 dependencies {
@@ -39,5 +45,4 @@ dependencies {
     testImplementation "junit:junit:$junit_version"
     androidTestImplementation "com.android.support.test:runner:$android_test_runner_version"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${espresso_core_version}"
-
 }

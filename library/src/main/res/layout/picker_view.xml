@@ -17,7 +17,7 @@
         android:layout_height="30dp"
         android:layout_gravity="start|center_vertical"
         android:scaleType="centerCrop"
-        app:srcCompat="@drawable/af" />
+       />
 
     <ImageView
         android:id="@+id/btnPick"

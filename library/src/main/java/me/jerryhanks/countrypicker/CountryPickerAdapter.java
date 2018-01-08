@@ -18,8 +18,6 @@ import com.afollestad.sectionedrecyclerview.SectionedViewHolder;
 import com.futuremind.recyclerviewfastscroll.SectionTitleProvider;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 

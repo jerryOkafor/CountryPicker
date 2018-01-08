@@ -1,9 +1,8 @@
-package me.jerryhanks.countrypicker;
+package me.jerryhanks.app;
 
-import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,20 +10,20 @@ import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
+
+import me.jerryhanks.countrypicker.PhoneNumberEditText;
 
 public class MainActivity extends AppCompatActivity implements CompoundButton.OnCheckedChangeListener {
 
-    private String TAG = MainActivity.class.getSimpleName();
     private PhoneNumberEditText picker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(me.jerryhanks.countrypicker.R.id.my_toolbar);
         setSupportActionBar(toolbar);
-
+//
         picker = findViewById(R.id.countryPicker);
         Switch s1 = findViewById(R.id.switch1);
         s1.setOnCheckedChangeListener(this);
@@ -96,16 +95,16 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == CountryPicker.PICKER_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK)
-                picker.handleActivityResult(data);
-            if (data!=null){
-                Country country = data.getParcelableExtra(CountryPicker.EXTRA_COUNTRY);
-                Toast.makeText(this, country.toString(), Toast.LENGTH_LONG).show();
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
+//        if (requestCode == CountryPicker.PICKER_REQUEST_CODE) {
+//            if (resultCode == Activity.RESULT_OK)
+//                picker.handleActivityResult(data);
+//            if (data != null) {
+//                Country country = data.getParcelableExtra(CountryPicker.EXTRA_COUNTRY);
+//                Toast.makeText(this, country.toString(), Toast.LENGTH_LONG).show();
+//            }
+//        } else {
+        super.onActivityResult(requestCode, resultCode, data);
+//        }
     }
 
 
@@ -139,5 +138,3 @@ public class MainActivity extends AppCompatActivity implements CompoundButton.On
         }
     }
 }
-
-

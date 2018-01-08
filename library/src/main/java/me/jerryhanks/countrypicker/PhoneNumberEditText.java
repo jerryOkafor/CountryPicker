@@ -25,7 +25,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import java.util.List;
@@ -34,23 +33,23 @@ import java.util.List;
  * @author Jerry Hanks on 12/14/17.
  */
 
-public class CountryPickerView extends RelativeLayout implements CountryPickerDialog.OnCountrySelectedCallback {
-    private final static int EXTRA_PADDING = 5;
-    private static final String TAG = CountryPickerView.class.getSimpleName();
+public class PhoneNumberEditText extends TextInputEditText implements CountryPickerDialog.OnCountrySelectedCallback {
+    private static final int EXTRA_PADDING = 5;
+    private static final String TAG = PhoneNumberEditText.class.getSimpleName();
     private static final String CP_PREF_FILE = "cp_pref_file";
-    private static final String ANDROID_NAME_SPACE = "http://schemas.android.com/apk/res/android";
+    private static final String LAST_SELECTION_TAG = "last_selection_tag";
 
-    private String lastSelectionTag = "last_selection_tag";
     private String defaultCountryName;
     private String preferredCountries;
+
+    private int fastScrollerBubbleColor;
+    private int fastScrollerHandleColor;
+    private int fastScrollerBubbleTextAppearance;
 
     private boolean isRTL;
     private boolean searchAllowed;
     private boolean dialogKeyboardAutoPopup;
     private boolean showFastScroller;
-    private int fastScrollerBubbleColor;
-    private int fastScrollerHandleColor;
-    private int fastScrollerBubbleTextAppearance;
     private boolean autoDetectCountryEnabled;
     private boolean showFullscreenDialog;
     private boolean showCountryCodeInView;
@@ -62,36 +61,24 @@ public class CountryPickerView extends RelativeLayout implements CountryPickerDi
     private Language languageToApply = Language.ENGLISH;
     private AutoDetectionPref selectedAutoDetectionPref;
     private Country selectedCountry = new Country("Nigeria", "+234", "NG");
+    private BitmapDrawable chip;
 
-    private View holderView;
-
-    public CountryPickerView(Context context) {
+    public PhoneNumberEditText(Context context) {
         this(context, null);
 
     }
 
-    public CountryPickerView(Context context, AttributeSet attrs) {
+    public PhoneNumberEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(attrs, 0);
     }
 
-    public CountryPickerView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public PhoneNumberEditText(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init(attrs, defStyleAttr);
     }
 
     private void init(AttributeSet attrs, int defStyleAttr) {
-
-        String xmlWidth = attrs.getAttributeValue(ANDROID_NAME_SPACE, "layout_width");
-
-        removeAllViewsInLayout();
-        //at run time, match parent value returns LayoutParams.MATCH_PARENT ("-1"), for some android xml preview it returns "fill_parent"
-        if (xmlWidth != null && (xmlWidth.equals(LayoutParams.MATCH_PARENT + "") || xmlWidth.equals(LayoutParams.FILL_PARENT + "") || xmlWidth.equals("fill_parent") || xmlWidth.equals("match_parent"))) {
-            holderView = inflate(getContext(), R.layout.picker_view, this);
-        } else {
-            holderView = inflate(getContext(), R.layout.picker_view, this);
-        }
-
         if (attrs != null) {
             TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs, R.styleable.PhoneNumberEditText, defStyleAttr, 0);
             try {
@@ -154,12 +141,8 @@ public class CountryPickerView extends RelativeLayout implements CountryPickerDi
             }
         }
 
-
-        //if remember last selection is set and default country is not set
-        if (TextUtils.isEmpty(defaultCountryName) && rememberLastSelection) {
-            Log.d(TAG, "Loading last saved country code!");
-            loadLastSelectedCountryCode();
-        }
+        isRTL = isRTLLanguage();
+        setInputType(InputType.TYPE_CLASS_NUMBER);
 
         //load the default country if it was set by the user
         if (!TextUtils.isEmpty(defaultCountryName)) {
@@ -171,7 +154,10 @@ public class CountryPickerView extends RelativeLayout implements CountryPickerDi
             startAutoCountryDetection(true);
         }
 
-        isRTL = isRTLLanguage();
+        //if remember last selection is set and default country is not set
+//        if (rememberLastSelection) {
+//            loadLastSelectedCountryCode();
+//        }
 
         updateSelectedCountry(selectedCountry);
 
@@ -237,50 +223,93 @@ public class CountryPickerView extends RelativeLayout implements CountryPickerDi
      */
     private void updateSelectedCountry(Country country) {
         CharSequence dialCode;
-        CharSequence nameCode;
+        CharSequence code;
         int drawableId;
         if (country == null) {
             dialCode = "+123";
-            nameCode = "NG";
+            code = "NG";
             drawableId = R.drawable.ng;
         } else {
             dialCode = country.getDialCode();
-            nameCode = country.getCode();
+            code = country.getCode();
             drawableId = Util.getFlagResID(country);
         }
 
-        TextView tvName = findViewById(R.id.tvShortCode);
-        ImageView iv = findViewById(R.id.ivFlag);
-
-        if (isShowCountryCodeInView()) {
-            tvName.setText(getContext().getString(R.string.fmt_code, nameCode));
-        }
-
-        if (isShowCountryDialCodeInView()) {
-            tvName.setText(getContext().getString(R.string.fmt_dial_code, dialCode));
-        }
-
-        if (isShowCountryDialCodeInView() && isShowCountryCodeInView()) {
-            tvName.setText(getContext().getString(R.string.fmt_code_and_dial_code, nameCode, dialCode));
-        }
-
-        if (!isShowCountryCodeInView() && !isShowCountryDialCodeInView()) {
-            tvName.setVisibility(View.GONE);
-        }
-
-
-        tvName.setTextSize(getHeight());
-        iv.setImageResource(drawableId);
-
+        chip = createClusterBitmap(dialCode, code, drawableId);
+        setCompoundDrawablesWithIntrinsicBounds(chip, null, null, null);
+        setCompoundDrawablePadding(10);
 
     }
 
 
+    /**
+     * Draws the Country flag, code and dial code and return it as a drawable
+     *
+     * @param dialCode   Country dial code
+     * @param code       County code.
+     * @param drawableId Drawable id for the flag
+     */
+    private BitmapDrawable createClusterBitmap(CharSequence dialCode, CharSequence code, int drawableId) {
+        View wrapper = LayoutInflater.from(getContext()).inflate(R.layout.picker_view,
+                null);
+
+        TextView tvCode = wrapper.findViewById(R.id.tvShortCode);
+        tvCode.setTypeface(getTypeface());
+        tvCode.setTextSize(getTextSize());
+        tvCode.setTextColor(getTextColors());
+
+        if (isShowCountryCodeInView()) {
+            tvCode.setText(getContext().getString(R.string.fmt_code, code));
+        }
+
+        if (isShowCountryDialCodeInView()) {
+            tvCode.setText(getContext().getString(R.string.fmt_dial_code, dialCode));
+        }
+
+        if (isShowCountryDialCodeInView() && isShowCountryCodeInView()) {
+            tvCode.setText(getContext().getString(R.string.fmt_code_and_dial_code, code, dialCode));
+        }
+
+        if (!isShowCountryCodeInView() && !isShowCountryDialCodeInView()) {
+            tvCode.setVisibility(View.GONE);
+        }
+
+
+        ImageView ivFlag = wrapper.findViewById(R.id.ivFlag);
+        ivFlag.setImageResource(drawableId);
+
+
+        wrapper.measure(MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED),
+                MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+        wrapper.layout(0, 0, wrapper.getMeasuredWidth(), wrapper.getMeasuredHeight());
+
+        if (isSetCountryCodeBorder()) {
+            wrapper.setBackgroundResource(R.drawable.picker_chip_bg);
+        }
+
+        wrapper.setDrawingCacheEnabled(true);
+        Bitmap bitmap = null;
+        try {
+            bitmap = wrapper.getDrawingCache(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return new BitmapDrawable(bitmap);
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        final Rect bounds = chip.getBounds();
+        final int x = (int) event.getX();
+        int iconXRect = isRTL ? getRight() - bounds.width() - EXTRA_PADDING :
+                getLeft() + bounds.width() + EXTRA_PADDING;
+
         switch (event.getAction()) {
             case MotionEvent.ACTION_UP: {
-                launchCountrySelectionDialog();
+                if (isRTL ? x >= iconXRect : x <= iconXRect) {
+                    startCountrySelection();
+                }
             }
             break;
 
@@ -330,6 +359,34 @@ public class CountryPickerView extends RelativeLayout implements CountryPickerDi
 
     }
 
+    public String getFullNumber() {
+        return getFullNumberWithPlus().replace("+", " ");
+    }
+
+    public String getFullNumberWithPlus() {
+        String phoneNumber;
+        String text = getText().toString();
+        if (text.startsWith("0")) {
+            phoneNumber = text.replaceFirst("0", "");
+        } else {
+            phoneNumber = text;
+        }
+
+        return this.selectedCountry.getDialCode() + phoneNumber;
+    }
+
+    @Nullable
+    public String getFormattedFullNumber() {
+        String formattedFullNumber;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            formattedFullNumber = PhoneNumberUtils.formatNumber(getFullNumberWithPlus(), getSelectedCountryCode());
+        } else {
+            formattedFullNumber = PhoneNumberUtils.formatNumber(getFullNumberWithPlus());
+        }
+
+        return formattedFullNumber;
+    }
+
     private String getSelectedCountryCode() {
         if (this.selectedCountry == null)
             return "";
@@ -344,7 +401,7 @@ public class CountryPickerView extends RelativeLayout implements CountryPickerDi
         this.autoDetectCountryEnabled = autoDetectCountryEnabled;
     }
 
-    Language getLanguageToApply() {
+    private Language getLanguageToApply() {
         if (languageToApply == null) {
             updateLanguageToApply();
         }
@@ -361,7 +418,7 @@ public class CountryPickerView extends RelativeLayout implements CountryPickerDi
     }
 
     private void resetToDefaultCountry() {
-        // TODO: 12/15/17 Implement rollback to the default country
+        setSelectedCountry(getCountryForName(getLanguageToApply(), defaultCountryName));
     }
 
     /**
@@ -470,7 +527,7 @@ public class CountryPickerView extends RelativeLayout implements CountryPickerDi
     public void setSelectedCountry(Country selectedCountry) {
         this.selectedCountry = selectedCountry;
         saveLastSelectedCountryCode(this.selectedCountry.getCode());
-        updateSelectedCountry(this.selectedCountry);
+        updateSelectedCountry(selectedCountry);
     }
 
     public boolean isShowCountryCodeInView() {
@@ -532,7 +589,7 @@ public class CountryPickerView extends RelativeLayout implements CountryPickerDi
         this.showFastScroller = show;
     }
 
-    public void launchCountrySelectionDialog() {
+    public void startCountrySelection() {
         if (isShowFullscreenDialog()) {
             try {
                 Intent intent = new Intent(getContext(), CountryPickerActivity.class);
@@ -557,6 +614,13 @@ public class CountryPickerView extends RelativeLayout implements CountryPickerDi
         }
     }
 
+    public void handleActivityResult(Intent data) {
+        Country country = data.getParcelableExtra(CountryPicker.EXTRA_COUNTRY);
+        Log.d(TAG, "Country: " + country);
+        setSelectedCountry(country);
+        updateSelectedCountry(country);
+
+    }
 
     /**
      * Saves the last selected Country code into Sharedpref
@@ -570,20 +634,19 @@ public class CountryPickerView extends RelativeLayout implements CountryPickerDi
         SharedPreferences.Editor editor = preferences.edit();
 
         //put the code into the editor
-        editor.putString(lastSelectionTag, countryCode);
+        editor.putString(LAST_SELECTION_TAG, countryCode);
 
         //save the code
         editor.apply();
 
     }
 
-    //moved
     private void loadLastSelectedCountryCode() {
         //get instance of the shared pref
         SharedPreferences preferences = getContext().getSharedPreferences(CP_PREF_FILE, Context.MODE_PRIVATE);
 
         //get the last selected country code
-        String lastSelectedCode = preferences.getString(lastSelectionTag, "ng");
+        String lastSelectedCode = preferences.getString(LAST_SELECTION_TAG, "ng");
 
         //set the country
         setSelectedCountry(getCountryForName(languageToApply, lastSelectedCode));

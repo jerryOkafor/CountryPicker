@@ -20,8 +20,7 @@
             android:layout_width="32dp"
             android:layout_height="21dp"
             android:adjustViewBounds="true"
-            android:scaleType="centerCrop"
-            app:srcCompat="@drawable/in" />
+            android:scaleType="centerCrop" />
     </LinearLayout>
 
     <TextView
@@ -54,7 +53,6 @@
         android:paddingStart="10dp"
         android:text="@string/sample_code"
         android:textColor="@android:color/secondary_text_light"
-        android:textDirection="ltr"
         android:textSize="16sp" />
 
     <View

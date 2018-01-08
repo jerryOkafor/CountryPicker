@@ -1,4 +1,4 @@
-package me.jerryhanks.countrypicker;
+package me.jerryhanks.app;
 
 import org.junit.Test;
 

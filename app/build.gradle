@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion compiled_sdk_version
     defaultConfig {
-        applicationId "me.jerryhanks.countrypickerdemo"
+        applicationId "me.jerryhanks.app"
         minSdkVersion min_sdk_version
         targetSdkVersion target_sdk_version
         versionCode 1
@@ -11,6 +11,11 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
+        debug {
+            testCoverageEnabled true
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -24,14 +29,11 @@ android {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation project(':countrypicker')
-
     implementation "com.android.support:appcompat-v7:${support_version}"
     implementation "com.android.support.constraint:constraint-layout:${constraint_layout_version}"
     implementation "com.android.support:design:${support_version}"
-
     testImplementation "junit:junit:${junit_version}"
-
     androidTestImplementation "com.android.support.test:runner:${android_test_runner_version}"
     androidTestImplementation "com.android.support.test.espresso:espresso-core:${espresso_core_version}"
+    implementation project(':library')
 }

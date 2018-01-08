@@ -81,7 +81,7 @@ public class Country implements Comparable<Country>, Parcelable {
         this.code = in.readString();
     }
 
-    public static final Parcelable.Creator<Country> CREATOR = new Parcelable.Creator<Country>() {
+    public static final Creator<Country> CREATOR = new Creator<Country>() {
         @Override
         public Country createFromParcel(Parcel source) {
             return new Country(source);
